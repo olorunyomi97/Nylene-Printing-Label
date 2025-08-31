@@ -26,6 +26,7 @@ body {
 
 .screen-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
 .screen-header h1 { margin: 0 auto 0 0; letter-spacing: 1px; }
+.muted-text { color: var(--muted); margin-bottom: 8px; font-size: 14px; }
 
 .grid { display: grid; gap: 24px; }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
@@ -41,12 +42,17 @@ body {
 .btn.secondary { background: var(--secondary); }
 .btn.tertiary { background: var(--tertiary); }
 .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.btn.selected { box-shadow: 0 0 0 3px var(--focus) inset; }
 
 .pill.small { font-size: 12px; padding: 6px 10px; background: #fff; }
 
 .screen-footer { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
 .spacer { flex: 1; }
 .right-buttons { display: flex; gap: 12px; }
+
+/* Product list */
+.product-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 8px; }
+.product-list .product-btn { background: #fff; }
 
 .weights-layout { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
 .form { display: grid; gap: 16px; }
