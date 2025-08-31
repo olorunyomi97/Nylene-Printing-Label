@@ -48,6 +48,36 @@ document.querySelectorAll('.btn-col[data-group] .option').forEach(btn => {
   });
 });
 
+// Defensive: also handle clicks via event delegation in case direct listeners fail to bind
+const sourceScreenEl = document.getElementById('screen-source');
+if (sourceScreenEl) {
+  sourceScreenEl.addEventListener('click', (event) => {
+    const optionBtn = event.target && event.target.closest && event.target.closest('.btn-col[data-group] .option');
+    if (optionBtn && sourceScreenEl.contains(optionBtn)) {
+      const groupCol = optionBtn.closest('.btn-col[data-group]');
+      if (groupCol) {
+        const group = groupCol.getAttribute('data-group');
+        groupCol.querySelectorAll('.option').forEach(x => x.classList.remove('selected'));
+        optionBtn.classList.add('selected');
+        state.source[group] = optionBtn.dataset.value;
+        state.activeGroup = group;
+        state.selectedProduct = null;
+        renderProductList();
+        const proceedBtnLocal = document.getElementById('btnProceedWeights');
+        if (proceedBtnLocal) proceedBtnLocal.disabled = true;
+        showScreen('products');
+      }
+    }
+
+    const specialBtn = event.target && event.target.closest && event.target.closest('[data-special]');
+    if (specialBtn && sourceScreenEl.contains(specialBtn)) {
+      sourceScreenEl.querySelectorAll('[data-special]').forEach(x => x.classList.remove('selected'));
+      specialBtn.classList.add('selected');
+      state.source.special = specialBtn.getAttribute('data-special');
+    }
+  });
+}
+
 document.querySelectorAll('[data-special]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('[data-special]').forEach(x => x.classList.remove('selected'));
