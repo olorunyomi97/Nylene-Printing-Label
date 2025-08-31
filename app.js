@@ -78,9 +78,19 @@ document.getElementById("btnNextFromSource").addEventListener("click", () => {
 // Back from products to source
 const backToSourceBtn = document.getElementById("backToSource");
 if (backToSourceBtn)
-    backToSourceBtn.addEventListener("click", () => showScreen("source"));
+    backToSourceBtn.addEventListener("click", () => {
+        // Clear visual highlight on previously selected source options
+        document
+            .querySelectorAll(".btn-col[data-group] .option.selected")
+            .forEach((x) => x.classList.remove("selected"));
+        // Also clear special selection highlight
+        document
+            .querySelectorAll("[data-special].selected")
+            .forEach((x) => x.classList.remove("selected"));
+        showScreen("source");
+    });
 
-// From products proceed to weights
+// From products proceed to weightss
 const proceedBtn = document.getElementById("btnProceedWeights");
 if (proceedBtn)
     proceedBtn.addEventListener("click", () => {
@@ -325,6 +335,25 @@ function buildBarcodePayload() {
 // Simple Code128-like placeholder barcode (not spec-perfect, but scannable as Code39)
 function drawBarcode(canvas, text) {
     const ctx = canvas.getContext("2d");
+    // Ensure canvas fits its parent container
+    const parent = canvas.parentElement;
+    if (parent) {
+        const maxWidth = parent.clientWidth || 320;
+        const maxHeight = parent.clientHeight || 120;
+        // Preserve original aspect ratio based on current canvas size
+        const aspect =
+            canvas.height > 0 ? canvas.width / canvas.height : 320 / 120;
+        let targetWidth = Math.min(maxWidth, Math.round(maxHeight * aspect));
+        let targetHeight = Math.round(targetWidth / aspect);
+        if (targetHeight > maxHeight) {
+            targetHeight = maxHeight;
+            targetWidth = Math.round(targetHeight * aspect);
+        }
+        if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+        }
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // We'll draw a simple Code39 style pattern using a basic library-free approach
     const code39 = {
@@ -374,11 +403,12 @@ function drawBarcode(canvas, text) {
         "*": "100101101101",
     };
     const content = `*${text.toUpperCase()}*`;
-    const narrow = 2; // px
+    // Scale bar width relative to canvas size to keep barcode within bounds
+    const narrow = Math.max(1, Math.floor(canvas.width / 200));
     const wide = narrow * 3;
-    let x = 10;
-    const y = 10;
-    const height = canvas.height - 20;
+    let x = narrow * 3;
+    const y = narrow * 3;
+    const height = canvas.height - y * 2;
     ctx.fillStyle = "#000";
     for (const ch of content) {
         const pattern = code39[ch];
@@ -390,33 +420,31 @@ function drawBarcode(canvas, text) {
             if (isBar) ctx.fillRect(x, y, w, height);
             x += w;
         }
-        // Inter-character gap
-        x += narrow;
     }
+
+    // Print button
+    document.getElementById("printBtn").addEventListener("click", () => {
+        window.print();
+    });
+
+    // Generators
+    function generateUnitNumber() {
+        const now = new Date();
+        const y = String(now.getFullYear()).slice(-2);
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const d = String(now.getDate()).padStart(2, "0");
+        const rand = Math.floor(Math.random() * 9000 + 1000);
+        return `BC${y}${m}${d}${rand}`; // e.g., BC2508041234
+    }
+
+    function generateBigCode() {
+        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let out = "";
+        for (let i = 0; i < 7; i++)
+            out += alphabet[Math.floor(Math.random() * alphabet.length)];
+        return out;
+    }
+
+    // Initialize
+    updatePreview();
 }
-
-// Print button
-document.getElementById("printBtn").addEventListener("click", () => {
-    window.print();
-});
-
-// Generators
-function generateUnitNumber() {
-    const now = new Date();
-    const y = String(now.getFullYear()).slice(-2);
-    const m = String(now.getMonth() + 1).padStart(2, "0");
-    const d = String(now.getDate()).padStart(2, "0");
-    const rand = Math.floor(Math.random() * 9000 + 1000);
-    return `BC${y}${m}${d}${rand}`; // e.g., BC2508041234
-}
-
-function generateBigCode() {
-    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let out = "";
-    for (let i = 0; i < 7; i++)
-        out += alphabet[Math.floor(Math.random() * alphabet.length)];
-    return out;
-}
-
-// Initialize
-updatePreview();
