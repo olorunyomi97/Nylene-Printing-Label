@@ -39,6 +39,12 @@ document.querySelectorAll('.btn-col[data-group] .option').forEach(btn => {
     btn.classList.add('selected');
     state.source[group] = btn.dataset.value;
     state.activeGroup = group;
+    // Immediately move to product selection for the chosen source
+    state.selectedProduct = null;
+    renderProductList();
+    const proceedBtnLocal = document.getElementById('btnProceedWeights');
+    if (proceedBtnLocal) proceedBtnLocal.disabled = true;
+    showScreen('products');
   });
 });
 
@@ -70,8 +76,9 @@ if (backToSourceBtn) backToSourceBtn.addEventListener('click', () => showScreen(
 // From products proceed to weights
 const proceedBtn = document.getElementById('btnProceedWeights');
 if (proceedBtn) proceedBtn.addEventListener('click', () => {
+  prefillDefaultWeights();
   showScreen('weights');
-  document.getElementById('netWeight').focus();
+  document.getElementById('grossWeight').focus();
 });
 
 // Back from weights to products
@@ -135,6 +142,10 @@ function renderProductList() {
         state.selectedProduct = prod;
         state.bigCode = prod; // bind big code to product
         if (proceedBtn) proceedBtn.disabled = false;
+        // Auto-advance to weights with defaults
+        prefillDefaultWeights();
+        showScreen('weights');
+        document.getElementById('grossWeight').focus();
       });
       if (state.selectedProduct === prod) {
         b.classList.add('selected');
@@ -150,6 +161,13 @@ const inputNet = document.getElementById('netWeight');
 const inputGross = document.getElementById('grossWeight');
 const inputTare = document.getElementById('tareWeight');
 let focusedInput = inputNet;
+
+function prefillDefaultWeights() {
+  if (inputNet) inputNet.value = '1800';
+  if (inputTare) inputTare.value = '81';
+  if (inputGross) inputGross.value = '';
+  syncWeightsFromInputs();
+}
 
 [inputNet, inputGross, inputTare].forEach(inp => {
   inp.addEventListener('focus', () => { focusedInput = inp; });
@@ -217,13 +235,49 @@ function updatePreview() {
 
   const grossLb = state.weights.grossLb;
   const netLb = state.weights.netLb;
+  const tareLb = state.weights.tareLb;
   document.getElementById('grossKg').textContent = lbToKg(grossLb).toFixed(1);
   document.getElementById('grossLb').textContent = grossLb.toFixed(1);
   document.getElementById('netKg').textContent = lbToKg(netLb).toFixed(1);
   document.getElementById('netLb').textContent = netLb.toFixed(1);
+  const tareKgEl = document.getElementById('tareKg');
+  const tareLbEl = document.getElementById('tareLb');
+  if (tareKgEl && tareLbEl) {
+    tareKgEl.textContent = lbToKg(tareLb).toFixed(1);
+    tareLbEl.textContent = tareLb.toFixed(1);
+  }
 
   document.getElementById('unitNumber').textContent = state.unitNumber;
-  drawBarcode(document.getElementById('barcodeCanvas'), state.unitNumber);
+  drawBarcode(document.getElementById('barcodeCanvas'), buildBarcodePayload());
+
+  // Fill product and source info
+  const productEl = document.getElementById('productName');
+  const sourceEl = document.getElementById('sourceChosen');
+  if (productEl) productEl.textContent = state.selectedProduct || state.bigCode || '—';
+  if (sourceEl) {
+    const group = state.activeGroup;
+    const letter = group ? state.source[group] : null;
+    const special = state.source.special ? ` (${state.source.special})` : '';
+    sourceEl.textContent = group && letter ? `${group.toUpperCase()} ${letter}${special}` : '—';
+  }
+}
+
+// Build a Code39-safe payload containing selected data
+function buildBarcodePayload() {
+  const allowed = /[^A-Z0-9\-\. \$\/\+\%]/g;
+  const sanitizeCode39 = (s) => (s || '').toString().toUpperCase().replace(allowed, '');
+  const group = state.activeGroup || '';
+  const letter = group ? state.source[group] || '' : '';
+  const src = group && letter ? `${group.toUpperCase()}-${letter}` : 'NA';
+  const sp = state.source.special ? ` SP ${sanitizeCode39(state.source.special)}` : '';
+  const product = sanitizeCode39(state.selectedProduct || state.bigCode || 'NA');
+  const net = Number(state.weights.netLb || 0).toFixed(1);
+  const gro = Number(state.weights.grossLb || 0).toFixed(1);
+  const tar = Number(state.weights.tareLb || 0).toFixed(1);
+  const unit = sanitizeCode39(state.unitNumber);
+  // Example: "UN BC2508041234 PR BS700D SRC SILO-A NET 1800.0 TAR 81.0 GRO 0.0"
+  const payload = `UN ${unit} PR ${product} SRC ${sanitizeCode39(src)}${sp} NET ${net} TAR ${tar} GRO ${gro}`;
+  return payload.trim();
 }
 
 // Simple Code128-like placeholder barcode (not spec-perfect, but scannable as Code39)
