@@ -300,8 +300,10 @@ function updatePreview() {
         const pieces = [];
         if (state.source.silo) pieces.push(`SILO ${state.source.silo}`);
         if (state.source.dryer) pieces.push(`DRYER ${state.source.dryer}`);
-        if (state.source.compound) pieces.push(`COMPOUND ${state.source.compound}`);
-        if (state.source.special) pieces.push(`SPECIAL ${state.source.special}`);
+        if (state.source.compound)
+            pieces.push(`COMPOUND ${state.source.compound}`);
+        if (state.source.special)
+            pieces.push(`SPECIAL ${state.source.special}`);
         allSelEl.textContent = pieces.length ? pieces.join("  ·  ") : "—";
     }
 }
@@ -399,7 +401,7 @@ function drawBarcode(canvas, text) {
             if (isBar) ctx.fillRect(x, y, w, height);
             x += w;
         }
-        // Inter-character ga
+        // Inter-character g
         x += narrow;
     }
 }
