@@ -80,6 +80,7 @@ body {
 .unit { font-size: 12px; }
 .unit span { font-size: 36px; font-weight: 800; letter-spacing: 2px; }
 .material { font-weight: 700; margin-bottom: 8px; }
+.material #sourceChosen { text-decoration: underline; cursor: pointer; }
 .barcode { display: flex; justify-content: flex-end; }
 
 /* Print styles: hide chrome, fit label to page */
