@@ -84,7 +84,13 @@ body {
 
 /* Print styles: hide chrome, fit label to page */
 @media print {
-  body { background: #fff; }
+  @page { size: 6in 4in; margin: 0; }
+  html, body { height: auto; background: #fff; }
+  #app { padding: 0; }
+  .screen { display: none !important; }
+  #screen-preview { display: block !important; }
   .screen-header, .preview-actions { display: none !important; }
-  .label-canvas { width: 100%; height: auto; box-shadow: none; }
+  .preview-layout { display: block; }
+  .label-canvas { width: 6in; height: 4in; margin: 0 auto; box-shadow: none; }
+  .barcode canvas { width: 100%; height: auto; }
 }
