@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Nylene Label Printer</title>
+        <title>Nylene Label Printerr</title>
         <link rel="stylesheet" href="styles.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -140,69 +140,43 @@
                 </div>
             </section>
 
-            <!-- Screen 3: Preview / Print -->
-            <section id="screen-preview" class="screen">
-                <header class="screen-header">
-                    <button id="backToWeights" class="pill small">
-                        Modify
-                    </button>
-                    <h1>PRINT PREVIEW</h1>
-                </header>
-                <div class="preview-layout">
-                    <div class="label-canvas" id="labelCanvas">
-                        <div class="label-header">
-                            <div class="made">
-                                PACKAGED/EMBALLÉ ON <span id="pkgDate"></span
-                                ><br />MADE IN CANADA - FABRIQUÉ AU CANADA
-                            </div>
-                            <img
-                                class="logo"
-                                alt="Logo"
-                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='60'%3E%3Ctext x='0' y='45' font-family='Arial' font-size='40'%3ENylene%3C/text%3E%3C/svg%3E"
-                            />
-                        </div>
-                        <div class="big-code" id="bigCode">BX3WQ662</div>
-                        <div class="weights">
-                            <div>
-                                <div class="w-title">GROSS WT / POIDS BRUT</div>
-                                <div class="w-values">
-                                    <span id="grossKg">0.0</span> KGS
-                                    <span id="grossLb">0.0</span> LBS
-                                </div>
-                            </div>
-                            <div>
-                                <div class="w-title">NET WT / POIDS NET</div>
-                                <div class="w-values">
-                                    <span id="netKg">0.0</span> KGS
-                                    <span id="netLb">0.0</span> LBS
-                                </div>
-                            </div>
-                        </div>
-                        <div class="footer-row">
-                            <div class="unit">
-                                UNIT NUMBER / NUMÉRO DE L'UNITÉ<br /><span
-                                    id="unitNumber"
-                                    >BC15220032</span
-                                >
-                            </div>
-                            <div class="material">NYLON 6</div>
-                            <div class="barcode">
-                                <canvas
-                                    id="barcodeCanvas"
-                                    width="320"
-                                    height="120"
-                                ></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <aside class="preview-actions">
-                        <button id="printBtn" class="btn primary">Print</button>
-                        <button id="clearPreview" class="btn secondary">
-                            Clear
-                        </button>
-                    </aside>
-                </div>
-            </section>
+    <!-- Screen 3: Preview / Print -->
+    <section id="screen-preview" class="screen">
+      <header class="screen-header">
+        <button id="backToWeights" class="pill small">Modify</button>
+        <h1>PRINT PREVIEW</h1>
+      </header>
+      <div class="preview-layout">
+        <div class="label-canvas" id="labelCanvas">
+          <div class="label-header">
+            <div class="made">PACKAGED/EMBALLÉ ON <span id="pkgDate"></span><br>MADE IN CANADA - FABRIQUÉ AU CANADA</div>
+            <img class="logo" alt="Logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='60'%3E%3Ctext x='0' y='45' font-family='Arial' font-size='40'%3ENylene%3C/text%3E%3C/svg%3E">
+          </div>
+          <div class="big-code" id="bigCode">BX3WQ662</div>
+          <div class="weights">
+            <div>
+              <div class="w-title">GROSS WT / POIDS BRUT</div>
+              <div class="w-values"><span id="grossKg">0.0</span> KGS <span id="grossLb">0.0</span> LBS</div>
+            </div>
+            <div>
+              <div class="w-title">NET WT / POIDS NET</div>
+              <div class="w-values"><span id="netKg">0.0</span> KGS <span id="netLb">0.0</span> LBS</div>
+            </div>
+            <div>
+              <div class="w-title">TARE WT / POIDS DE TARE</div>
+              <div class="w-values"><span id="tareKg">0.0</span> KGS <span id="tareLb">0.0</span> LBS</div>
+            </div>
+          </div>
+          <div class="footer-row">
+            <div class="unit">UNIT NUMBER / NUMÉRO DE L'UNITÉ<br><span id="unitNumber">BC15220032</span></div>
+            <div class="material">
+              PRODUCT: <span id="productName">—</span><br>
+              SOURCE: <span id="sourceChosen">—</span>
+            </div>
+            <div class="barcode">
+              <canvas id="barcodeCanvas" width="320" height="120"></canvas>
+            </div>
+          </div>
         </div>
 
         <script src="app.js"></script>
