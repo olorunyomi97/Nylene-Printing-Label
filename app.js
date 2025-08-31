@@ -419,6 +419,9 @@ document.getElementById("printBtn").addEventListener("click", async () => {
         alert("Logging failed. The label will still print.");
     }
     window.print();
+    // After printing, prepare next sequential unit number
+    state.unitNumber = generateUnitNumber();
+    updatePreview();
 });
 
 // Build a log record from current state
@@ -579,13 +582,50 @@ document.getElementById("excelBtn").addEventListener("click", async () => {
 });
 
 // Generators
+// Unit Number format: AC15 + DDD + SSS
+// - Prefix: "AC15"
+// - DDD: day-of-year (001-365/366) for current year
+// - SSS: sequential 3-digit counter starting at 001 each day
 function generateUnitNumber() {
     const now = new Date();
-    const y = String(now.getFullYear()).slice(-2);
-    const m = String(now.getMonth() + 1).padStart(2, "0");
-    const d = String(now.getDate()).padStart(2, "0");
-    const rand = Math.floor(Math.random() * 9000 + 1000);
-    return `BC${y}${m}${d}${rand}`; // e.g., BC2508041234
+    const doy = getDayOfYear(now); // 1..365/366
+    const doyStr = String(doy).padStart(3, "0");
+    const seq = getAndIncrementDailySequence(now);
+    const seqStr = String(seq).padStart(3, "0");
+    return `AC15${doyStr}${seqStr}`;
+}
+
+function getDayOfYear(date) {
+    const start = new Date(date.getFullYear(), 0, 1);
+    const diffMs = date - start;
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    return Math.floor(diffMs / oneDayMs) + 1;
+}
+
+const SEQ_STORE_KEY = "unit_seq_store_v1";
+function getAndIncrementDailySequence(date) {
+    try {
+        const y = date.getFullYear();
+        const doy = getDayOfYear(date);
+        const key = `${y}-${doy}`;
+        const raw = localStorage.getItem(SEQ_STORE_KEY);
+        const store = raw ? JSON.parse(raw) : {};
+        const current = store[key] || 0;
+        const next = current + 1;
+        store[key] = next;
+        // Keep only recent entries to avoid unbounded growth (e.g., last 370 days)
+        const entries = Object.entries(store)
+            .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+            .slice(-370);
+        const trimmed = Object.fromEntries(entries);
+        localStorage.setItem(SEQ_STORE_KEY, JSON.stringify(trimmed));
+        return next;
+    } catch {
+        // Fallback if localStorage is unavailable
+        if (!window.__fallbackSeq) window.__fallbackSeq = 0;
+        window.__fallbackSeq += 1;
+        return window.__fallbackSeq;
+    }
 }
 
 function generateBigCode() {
