@@ -41,7 +41,7 @@ document.querySelectorAll(".btn-col[data-group] .option").forEach((btn) => {
         btn.classList.add("selected");
         state.source[group] = btn.dataset.value;
         state.activeGroup = group;
-        // Immediately move to product selection for the chosen source
+        // Immediately move to product selection for the chosen sourc
         state.selectedProduct = null;
         renderProductList();
         const proceedBtnLocal = document.getElementById("btnProceedWeights");
@@ -253,20 +253,20 @@ document.getElementById("clearPreview").addEventListener("click", () => {
 });
 
 // Make SOURCE value in preview clickable to return to source selection
-const sourceChosenEl = document.getElementById('sourceChosen');
+const sourceChosenEl = document.getElementById("sourceChosen");
 if (sourceChosenEl) {
-  sourceChosenEl.setAttribute('role', 'button');
-  sourceChosenEl.setAttribute('tabindex', '0');
-  sourceChosenEl.setAttribute('title', 'Click to change source');
-  sourceChosenEl.addEventListener('click', () => {
-    showScreen('source');
-  });
-  sourceChosenEl.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      showScreen('source');
-    }
-  });
+    sourceChosenEl.setAttribute("role", "button");
+    sourceChosenEl.setAttribute("tabindex", "0");
+    sourceChosenEl.setAttribute("title", "Click to change source");
+    sourceChosenEl.addEventListener("click", () => {
+        showScreen("source");
+    });
+    sourceChosenEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            showScreen("source");
+        }
+    });
 }
 
 // Preview fill and barcode rendering
