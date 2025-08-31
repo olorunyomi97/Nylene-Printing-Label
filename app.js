@@ -282,6 +282,7 @@ function updatePreview() {
     // Fill product and source info
     const productEl = document.getElementById("productName");
     const sourceEl = document.getElementById("sourceChosen");
+    const allSelEl = document.getElementById("allSelections");
     if (productEl)
         productEl.textContent = state.selectedProduct || state.bigCode || "—";
     if (sourceEl) {
@@ -294,6 +295,14 @@ function updatePreview() {
             group && letter
                 ? `${group.toUpperCase()} ${letter}${special}`
                 : "—";
+    }
+    if (allSelEl) {
+        const pieces = [];
+        if (state.source.silo) pieces.push(`SILO ${state.source.silo}`);
+        if (state.source.dryer) pieces.push(`DRYER ${state.source.dryer}`);
+        if (state.source.compound) pieces.push(`COMPOUND ${state.source.compound}`);
+        if (state.source.special) pieces.push(`SPECIAL ${state.source.special}`);
+        allSelEl.textContent = pieces.length ? pieces.join("  ·  ") : "—";
     }
 }
 
