@@ -390,7 +390,7 @@ function drawBarcode(canvas, text) {
             if (isBar) ctx.fillRect(x, y, w, height);
             x += w;
         }
-        // Inter-character gap
+        // Inter-character ga
         x += narrow;
     }
 }
