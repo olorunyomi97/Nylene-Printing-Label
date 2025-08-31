@@ -228,6 +228,23 @@ document.getElementById('clearPreview').addEventListener('click', () => {
   updatePreview();
 });
 
+// Make SOURCE value in preview clickable to return to source selection
+const sourceChosenEl = document.getElementById('sourceChosen');
+if (sourceChosenEl) {
+  sourceChosenEl.setAttribute('role', 'button');
+  sourceChosenEl.setAttribute('tabindex', '0');
+  sourceChosenEl.setAttribute('title', 'Click to change source');
+  sourceChosenEl.addEventListener('click', () => {
+    showScreen('source');
+  });
+  sourceChosenEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showScreen('source');
+    }
+  });
+}
+
 // Preview fill and barcode rendering
 function lbToKg(lb) { return +(lb * 0.45359237).toFixed(1); }
 
