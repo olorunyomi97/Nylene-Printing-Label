@@ -15,6 +15,7 @@ const state = {
     },
     unitNumber: generateUnitNumber(),
     bigCode: generateBigCode(),
+    excelHandle: null, // FileSystemFileHandle for logs, if chosen
 };
 
 // Screen helpers
@@ -407,8 +408,159 @@ function drawBarcode(canvas, text) {
 }
 
 // Print button
-document.getElementById("printBtn").addEventListener("click", () => {
+document.getElementById("printBtn").addEventListener("click", async () => {
+    // Ensure preview reflects latest state before printing/logging
+    updatePreview();
+    // Log first, then print
+    try {
+        await appendLogRecord();
+    } catch (err) {
+        console.error("Log append failed", err);
+        alert("Logging failed. The label will still print.");
+    }
     window.print();
+});
+
+// Build a log record from current state
+function buildLogRecord() {
+    const now = new Date();
+    const toIso = (d) => new Date(d).toISOString();
+    const group = state.activeGroup || "";
+    const letter = group ? state.source[group] || "" : "";
+    return {
+        timestamp: toIso(now),
+        unitNumber: state.unitNumber,
+        product: state.selectedProduct || state.bigCode,
+        sourceGroup: group,
+        sourceLetter: letter,
+        special: state.source.special || "",
+        grossLb: Number(state.weights.grossLb || 0),
+        grossKg: lbToKg(Number(state.weights.grossLb || 0)),
+        netLb: Number(state.weights.netLb || 0),
+        netKg: lbToKg(Number(state.weights.netLb || 0)),
+        tareLb: Number(state.weights.tareLb || 0),
+        tareKg: lbToKg(Number(state.weights.tareLb || 0)),
+        barcodePayload: buildBarcodePayload(),
+    };
+}
+
+// Local storage helpers for logs
+const LOGS_KEY = "print_logs_v1";
+function loadLogs() {
+    try {
+        const raw = localStorage.getItem(LOGS_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch {
+        return [];
+    }
+}
+function saveLogs(logs) {
+    localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+}
+
+async function appendLogRecord() {
+    const logs = loadLogs();
+    const record = buildLogRecord();
+    logs.push(record);
+    saveLogs(logs);
+    // Try writing to chosen Excel file if available
+    if (state.excelHandle && (await verifyHandleWriteable(state.excelHandle))) {
+        await appendToExcelFile(state.excelHandle, logs);
+    }
+}
+
+async function verifyHandleWriteable(handle) {
+    try {
+        // Request permission if needed
+        if ((await handle.queryPermission({ mode: "readwrite" })) !== "granted") {
+            const res = await handle.requestPermission({ mode: "readwrite" });
+            if (res !== "granted") return false;
+        }
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+// Append or create workbook on a file handle
+async function appendToExcelFile(fileHandle, logs) {
+    try {
+        const file = await fileHandle.getFile();
+        const arrayBuffer = await file.arrayBuffer();
+        const wb = XLSX.read(arrayBuffer, { type: "array" });
+        const wsName = wb.SheetNames[0] || "Logs";
+        const ws = wb.Sheets[wsName];
+        const existing = XLSX.utils.sheet_to_json(ws);
+        const merged = mergeByTimestamp(existing, logs);
+        const newWs = XLSX.utils.json_to_sheet(merged);
+        wb.Sheets[wsName] = newWs;
+        const out = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const writable = await fileHandle.createWritable();
+        await writable.write(out);
+        await writable.close();
+    } catch (e) {
+        // If file not found or not an excel, create new workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(logs);
+        XLSX.utils.book_append_sheet(wb, ws, "Logs");
+        const out = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const writable = await fileHandle.createWritable();
+        await writable.write(out);
+        await writable.close();
+    }
+}
+
+function mergeByTimestamp(existingRows, newRows) {
+    const seen = new Set(existingRows.map((r) => r.timestamp + ":" + r.unitNumber));
+    const merged = existingRows.slice();
+    for (const r of newRows) {
+        const key = r.timestamp + ":" + r.unitNumber;
+        if (!seen.has(key)) {
+            seen.add(key);
+            merged.push(r);
+        }
+    }
+    return merged;
+}
+
+// Download logs as Excel
+document.getElementById("exportLogsBtn").addEventListener("click", () => {
+    const logs = loadLogs();
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(logs);
+    XLSX.utils.book_append_sheet(wb, ws, "Logs");
+    XLSX.writeFile(wb, `label-logs-${new Date().toISOString().slice(0,10)}.xlsx`);
+});
+
+// EXCEL pill: choose file handle or download
+document.getElementById("excelBtn").addEventListener("click", async () => {
+    if (window.showSaveFilePicker) {
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: `label-logs-${new Date().toISOString().slice(0,10)}.xlsx`,
+                types: [
+                    {
+                        description: "Excel Files",
+                        accept: { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] },
+                    },
+                ],
+            });
+            state.excelHandle = handle;
+            // Write current logs immediately so the file exists
+            const logs = loadLogs();
+            await appendToExcelFile(handle, logs);
+            alert("Excel log file is set. Future prints will append.");
+        } catch (e) {
+            console.warn("Excel file selection cancelled or failed", e);
+        }
+    } else {
+        // Fallback: download current logs now
+        const logs = loadLogs();
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(logs);
+        XLSX.utils.book_append_sheet(wb, ws, "Logs");
+        XLSX.writeFile(wb, `label-logs-${new Date().toISOString().slice(0,10)}.xlsx`);
+    }
 });
 
 // Generators
