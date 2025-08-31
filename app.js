@@ -417,6 +417,8 @@ document.getElementById("printBtn").addEventListener("click", async () => {
         alert("Logging failed. The label will still print.");
     }
     window.print();
+    // After printing, commit current unit number and advance to the next one
+    commitAndAdvanceUnitNumber();
 });
 
 // Build a log record from current state
@@ -562,13 +564,58 @@ document.getElementById("excelBtn").addEventListener("click", async () => {
 });
 
 // Generators
+const UNIT_PREFIX = "AC15";
+const UNIT_SEQ_KEY = "unit_seq_v1";
+
+function getDayOfYear(d) {
+    const start = new Date(d.getFullYear(), 0, 1);
+    const diff = d - start;
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    return Math.floor(diff / oneDayMs) + 1; // 1..366
+}
+
+function loadUnitSeqState() {
+    try {
+        const raw = localStorage.getItem(UNIT_SEQ_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function saveUnitSeqState(obj) {
+    localStorage.setItem(UNIT_SEQ_KEY, JSON.stringify(obj));
+}
+
+function peekNextSequence(now) {
+    const currentYear = now.getFullYear();
+    const currentDoy = getDayOfYear(now);
+    const saved = loadUnitSeqState();
+    if (!saved || saved.year !== currentYear || saved.doy !== currentDoy) {
+        return 1;
+    }
+    const last = Number(saved.seq || 0);
+    return last + 1;
+}
+
 function generateUnitNumber() {
     const now = new Date();
-    const y = String(now.getFullYear()).slice(-2);
-    const m = String(now.getMonth() + 1).padStart(2, "0");
-    const d = String(now.getDate()).padStart(2, "0");
-    const rand = Math.floor(Math.random() * 9000 + 1000);
-    return `BC${y}${m}${d}${rand}`; // e.g., BC2508041234
+    const doy = String(getDayOfYear(now)).padStart(3, "0");
+    const seq = String(peekNextSequence(now)).padStart(3, "0");
+    return `${UNIT_PREFIX}${doy}${seq}`; // e.g., AC15243001
+}
+
+function commitAndAdvanceUnitNumber() {
+    const now = new Date();
+    const nowDoy = getDayOfYear(now);
+    const used = (state.unitNumber || "").toString();
+    const usedSeq = Number(used.slice(-3)) || 0;
+    const usedDoy = Number(used.slice(4, 7)) || nowDoy;
+    const seqToStore = nowDoy === usedDoy ? usedSeq : 0;
+    saveUnitSeqState({ year: now.getFullYear(), doy: nowDoy, seq: seqToStore });
+    // Prepare next preview number
+    state.unitNumber = generateUnitNumber();
+    updatePreview();
 }
 
 function generateBigCode() {
