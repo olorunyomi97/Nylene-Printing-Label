@@ -218,34 +218,29 @@ body {
 .label-header .made {
     font-size: 14px;
     line-height: 1.2;
-    letter-spacing: 0.2px;
 }
 .label-header .logo {
     margin-left: auto;
     height: 48px;
 }
 .big-code {
-    font-size: 110px;
+    font-size: 80px;
     font-weight: 800;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     text-align: left;
-    line-height: 1;
 }
 .weights {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 10px;
 }
 .w-title {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
 }
 .w-values {
     font-size: 24px;
     font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
 }
 .footer-row {
     display: grid;
@@ -257,14 +252,14 @@ body {
     font-size: 14px;
 }
 .unit span {
-    font-size: 58px;
+    font-size: 60px;
     font-weight: 800;
     letter-spacing: 2px;
 }
 .material {
     font-weight: 700;
     margin-bottom: 8px;
-    font-size: 18px;
+    font-size: 16px;
 }
 .material #sourceChosen {
     text-decoration: underline;
@@ -273,6 +268,10 @@ body {
 .barcode {
     display: flex;
     justify-content: flex-end;
+}
+
+.box-number {
+    font-size: larger;
 }
 
 /* Print styles: hide chrome, fit label to page */
