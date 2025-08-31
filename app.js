@@ -252,7 +252,7 @@ function updatePreview() {
     const pad = (n) => String(n).padStart(2, "0");
     const stamp = `${pad(now.getMonth() + 1)}/${pad(
         now.getDate()
-    )}/${now.getFullYear()} AT ${pad(now.getHours())}:${pad(
+    )}/${now.getFullYear()} ${pad(now.getHours())}:${pad(
         now.getMinutes()
     )}:${pad(now.getSeconds())}`;
     document.getElementById("pkgDate").textContent = stamp;
@@ -266,7 +266,12 @@ function updatePreview() {
     document.getElementById("grossLb").textContent = grossLb.toFixed(1);
     document.getElementById("netKg").textContent = lbToKg(netLb).toFixed(1);
     document.getElementById("netLb").textContent = netLb.toFixed(1);
-    // Tare removed from label; no longer update tare fields
+    const tareKgEl = document.getElementById("tareKg");
+    const tareLbEl = document.getElementById("tareLb");
+    if (tareKgEl && tareLbEl) {
+        tareKgEl.textContent = lbToKg(tareLb).toFixed(1);
+        tareLbEl.textContent = tareLb.toFixed(1);
+    }
 
     document.getElementById("unitNumber").textContent = state.unitNumber;
     drawBarcode(
