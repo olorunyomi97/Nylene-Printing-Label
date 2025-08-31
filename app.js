@@ -280,7 +280,7 @@ function updatePreview() {
         buildBarcodePayload()
     );
 
-    // Fill product and source info
+    // Fill product and source inf
     const productEl = document.getElementById("productName");
     const sourceEl = document.getElementById("sourceChosen");
     const allSelEl = document.getElementById("allSelections");
@@ -472,7 +472,9 @@ async function appendLogRecord() {
 async function verifyHandleWriteable(handle) {
     try {
         // Request permission if needed
-        if ((await handle.queryPermission({ mode: "readwrite" })) !== "granted") {
+        if (
+            (await handle.queryPermission({ mode: "readwrite" })) !== "granted"
+        ) {
             const res = await handle.requestPermission({ mode: "readwrite" });
             if (res !== "granted") return false;
         }
@@ -511,7 +513,9 @@ async function appendToExcelFile(fileHandle, logs) {
 }
 
 function mergeByTimestamp(existingRows, newRows) {
-    const seen = new Set(existingRows.map((r) => r.timestamp + ":" + r.unitNumber));
+    const seen = new Set(
+        existingRows.map((r) => r.timestamp + ":" + r.unitNumber)
+    );
     const merged = existingRows.slice();
     for (const r of newRows) {
         const key = r.timestamp + ":" + r.unitNumber;
@@ -529,7 +533,10 @@ document.getElementById("exportLogsBtn").addEventListener("click", () => {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(logs);
     XLSX.utils.book_append_sheet(wb, ws, "Logs");
-    XLSX.writeFile(wb, `label-logs-${new Date().toISOString().slice(0,10)}.xlsx`);
+    XLSX.writeFile(
+        wb,
+        `label-logs-${new Date().toISOString().slice(0, 10)}.xlsx`
+    );
 });
 
 // EXCEL pill: choose file handle or download
@@ -537,11 +544,16 @@ document.getElementById("excelBtn").addEventListener("click", async () => {
     if (window.showSaveFilePicker) {
         try {
             const handle = await window.showSaveFilePicker({
-                suggestedName: `label-logs-${new Date().toISOString().slice(0,10)}.xlsx`,
+                suggestedName: `label-logs-${new Date()
+                    .toISOString()
+                    .slice(0, 10)}.xlsx`,
                 types: [
                     {
                         description: "Excel Files",
-                        accept: { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] },
+                        accept: {
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                                [".xlsx"],
+                        },
                     },
                 ],
             });
@@ -559,7 +571,10 @@ document.getElementById("excelBtn").addEventListener("click", async () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.json_to_sheet(logs);
         XLSX.utils.book_append_sheet(wb, ws, "Logs");
-        XLSX.writeFile(wb, `label-logs-${new Date().toISOString().slice(0,10)}.xlsx`);
+        XLSX.writeFile(
+            wb,
+            `label-logs-${new Date().toISOString().slice(0, 10)}.xlsx`
+        );
     }
 });
 
