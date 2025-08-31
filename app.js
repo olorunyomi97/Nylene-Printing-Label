@@ -6,6 +6,8 @@ const state = {
     compound: null,
     special: null,
   },
+  activeGroup: null, // 'silo' | 'dryer' | 'compound'
+  selectedProduct: null,
   weights: {
     netLb: 0,
     grossLb: 0,
@@ -18,6 +20,7 @@ const state = {
 // Screen helpers
 const screens = {
   source: document.getElementById('screen-source'),
+  products: document.getElementById('screen-products'),
   weights: document.getElementById('screen-weights'),
   preview: document.getElementById('screen-preview'),
 };
@@ -35,6 +38,7 @@ document.querySelectorAll('.btn-col[data-group] .option').forEach(btn => {
     btn.parentElement.querySelectorAll('.option').forEach(x => x.classList.remove('selected'));
     btn.classList.add('selected');
     state.source[group] = btn.dataset.value;
+    state.activeGroup = group;
   });
 });
 
@@ -47,12 +51,99 @@ document.querySelectorAll('[data-special]').forEach(btn => {
 });
 
 document.getElementById('btnNextFromSource').addEventListener('click', () => {
+  // Derive active group if not explicitly tracked
+  const chosenGroup = state.activeGroup || ['silo','dryer','compound'].find(g => state.source[g]);
+  if (!chosenGroup || !state.source[chosenGroup]) {
+    alert('Please choose a source before continuing.');
+    return;
+  }
+  state.activeGroup = chosenGroup;
+  state.selectedProduct = null;
+  renderProductList();
+  showScreen('products');
+});
+
+// Back from products to source
+const backToSourceBtn = document.getElementById('backToSource');
+if (backToSourceBtn) backToSourceBtn.addEventListener('click', () => showScreen('source'));
+
+// From products proceed to weights
+const proceedBtn = document.getElementById('btnProceedWeights');
+if (proceedBtn) proceedBtn.addEventListener('click', () => {
   showScreen('weights');
-  // Focus first input
   document.getElementById('netWeight').focus();
 });
 
-document.getElementById('backToSource').addEventListener('click', () => showScreen('source'));
+// Back from weights to products
+document.getElementById('backToProducts').addEventListener('click', () => { renderProductList(); showScreen('products'); });
+
+// Product catalog derived from provided sheet
+const PRODUCTS = {
+  silo: {
+    A: ['BS700D','BS700A'],
+    B: ['BS700D'],
+    C: ['BS700R80','BS700RA','BS700D','BS640T'],
+    D: ['BS700D']
+  },
+  dryer: {
+    A: ['700D-INT','BS640T'],
+    B: ['BS700D','BS640T'],
+    C: ['BS700D','BS640T','BS640UX'],
+    D: ['BS640AFOIL']
+  },
+  compound: {
+    A: ['BX3WQ662X'],
+    B: ['CSDN-INT','BS700D','BS640AFOIL','BS640UX','PA6-205']
+  },
+  extrusion: {
+    EA: [],
+    EB: []
+  },
+  other: {
+    UX: ['BS640UX'],
+    LT: ['CAPRO']
+  }
+};
+
+function renderProductList() {
+  const group = state.activeGroup;
+  const letter = state.source[group];
+  const listEl = document.getElementById('productList');
+  const metaEl = document.getElementById('productMeta');
+  if (!group || !letter) {
+    listEl.innerHTML = '';
+    metaEl.textContent = '';
+    return;
+  }
+  const items = (PRODUCTS[group] && PRODUCTS[group][letter]) ? PRODUCTS[group][letter] : [];
+  metaEl.textContent = `${group.toUpperCase()} ${letter}`;
+  listEl.innerHTML = '';
+  if (!items.length) {
+    const empty = document.createElement('div');
+    empty.className = 'muted-text';
+    empty.textContent = 'No products for this source.';
+    listEl.appendChild(empty);
+  } else {
+    items.forEach(prod => {
+      const b = document.createElement('button');
+      b.className = 'btn product-btn';
+      b.textContent = prod;
+      b.addEventListener('click', () => {
+        // Clear previous selection visual
+        listEl.querySelectorAll('.btn').forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+        state.selectedProduct = prod;
+        state.bigCode = prod; // bind big code to product
+        if (proceedBtn) proceedBtn.disabled = false;
+      });
+      if (state.selectedProduct === prod) {
+        b.classList.add('selected');
+      }
+      listEl.appendChild(b);
+    });
+    if (proceedBtn) proceedBtn.disabled = !state.selectedProduct;
+  }
+}
 
 // Weights screen logic
 const inputNet = document.getElementById('netWeight');
