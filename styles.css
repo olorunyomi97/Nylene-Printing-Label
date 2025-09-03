@@ -304,7 +304,7 @@ body {
     .label-canvas {
         width: 101.6mm;
         height: 152.4mm;
-        padding: 5mm;
+        padding: 0;
         margin: 0 auto;
         box-shadow: none;
     }
@@ -315,14 +315,14 @@ body {
     }
     /* Tweak typography to prevent wrapping/clipping on thermal printers */
     .big-code {
-        font-size: 64px;
+        font-size: 58px;
         letter-spacing: 2px;
     }
     .w-values {
-        font-size: 22px;
+        font-size: 20px;
     }
     .unit span {
-        font-size: 50px;
+        font-size: 46px;
         letter-spacing: 1px;
     }
     .barcode canvas {
