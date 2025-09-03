@@ -277,7 +277,7 @@ body {
 /* Print styles: hide chrome, fit label to page */
 @media print {
     @page {
-        size: 8in 5in;
+        size: 110mm 152mm;
         margin: 0;
     }
     html,
@@ -302,8 +302,8 @@ body {
         display: block;
     }
     .label-canvas {
-        width: 8in;
-        height: 5in;
+        width: 110mm;
+        height: 152mm;
         margin: 0 auto;
         box-shadow: none;
     }
