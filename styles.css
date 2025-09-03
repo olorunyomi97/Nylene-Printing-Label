@@ -274,7 +274,7 @@ body {
     font-size: larger;
 }
 
-/* Print styles: hide chrome, fit label to page */
+/* Print styles: hide chrome, fit label to page *
 @media print {
     @page {
         size: 101.6mm 152.4mm;
@@ -309,6 +309,7 @@ body {
         box-shadow: none;
     }
     /* Ensure footer grid fits the 110mm width; avoid fixed pixel overflow */
+
     .footer-row {
         grid-template-columns: 1fr auto 40mm;
         gap: 4mm;
@@ -329,4 +330,25 @@ body {
         width: 100%;
         height: auto;
     }
+
+.footer-row {
+    grid-template-columns: 1fr auto 40mm;
+    gap: 4mm;
+}
+/* Tweak typography to prevent wrapping/clipping on thermal printers */
+.big-code {
+    font-size: 64px;
+    letter-spacing: 2px;
+}
+.w-values {
+    font-size: 22px;
+}
+.unit span {
+    font-size: 50px;
+    letter-spacing: 1px;
+}
+.barcode canvas {
+    width: 100%;
+    height: auto;
+
 }
