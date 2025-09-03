@@ -274,7 +274,7 @@ body {
     font-size: larger;
 }
 
-/* Print styles: hide chrome, fit label to page */
+/* Print styles: hide chrome, fit label to page *
 @media print {
     @page {
         size: 110mm 152mm;
