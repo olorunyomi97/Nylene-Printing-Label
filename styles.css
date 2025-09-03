@@ -277,7 +277,7 @@ body {
 /* Print styles: hide chrome, fit label to page */
 @media print {
     @page {
-        size: 110mm 152mm;
+        size: 101.6mm 152.4mm;
         margin: 0;
     }
     html,
@@ -302,10 +302,28 @@ body {
         display: block;
     }
     .label-canvas {
-        width: 110mm;
-        height: 152mm;
+        width: 101.6mm;
+        height: 152.4mm;
+        padding: 5mm;
         margin: 0 auto;
         box-shadow: none;
+    }
+    /* Ensure footer grid fits the 110mm width; avoid fixed pixel overflow */
+    .footer-row {
+        grid-template-columns: 1fr auto 40mm;
+        gap: 4mm;
+    }
+    /* Tweak typography to prevent wrapping/clipping on thermal printers */
+    .big-code {
+        font-size: 64px;
+        letter-spacing: 2px;
+    }
+    .w-values {
+        font-size: 22px;
+    }
+    .unit span {
+        font-size: 50px;
+        letter-spacing: 1px;
     }
     .barcode canvas {
         width: 100%;
