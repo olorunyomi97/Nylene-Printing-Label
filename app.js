@@ -76,7 +76,7 @@ document.getElementById("btnNextFromSource").addEventListener("click", () => {
     showScreen("products");
 });
 
-// Back from products to source
+// Back from products to sourc
 const backToSourceBtn = document.getElementById("backToSource");
 if (backToSourceBtn)
     backToSourceBtn.addEventListener("click", () => showScreen("source"));
