@@ -1,5 +1,27 @@
 // Minimal Code39 renderer
 export function drawBarcode(canvas, text) {
+    // Prefer JsBarcode (CODE128) when available for standards-compliant scanning
+    if (window.JsBarcode && canvas) {
+        try {
+            // Clear any previous drawing
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Render CODE128 for broader character support
+            window.JsBarcode(canvas, String(text || ''), {
+                format: 'CODE128',
+                displayValue: false,
+                background: '#ffffff00',
+                margin: 10,
+                width: 1,
+                height: canvas.height - 20,
+            });
+            return;
+        } catch (e) {
+            // Fall through to basic renderer on any error
+        }
+    }
+
+    // Fallback: Minimal Code39 renderer (uppercase limited charset)
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const code39 = {
@@ -15,7 +37,7 @@ export function drawBarcode(canvas, text) {
         '-': '100101011011', '.': '110010101101', ' ': '100110101101', '$': '100100100101',
         '/': '100100101001', '+': '100101001001', '%': '101001001001', '*': '100101101101'
     };
-    const content = `*${(text || '').toUpperCase()}*`;
+    const content = `*${(text || '').toString().toUpperCase()}*`;
     const narrow = 2;
     const wide = narrow * 3;
     let x = 10;
