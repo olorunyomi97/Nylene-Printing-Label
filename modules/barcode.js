@@ -19,7 +19,7 @@ export function drawBarcode(canvas, text) {
             });
             return;
         } catch (e) {
-            // Fall through to basic renderer on any erro
+            // Fall through to basic renderer on any error
         }
     }
 
