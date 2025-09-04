@@ -312,7 +312,7 @@ body {
         box-shadow: none;
     }
     .barcode canvas {
-        width: 100%;
+        width: 65%;
         height: auto;
     }
 }
