@@ -40,7 +40,7 @@ function updatePreview() {
     if (pkgDate) pkgDate.textContent = stamp;
 
     const bigCode = document.getElementById('bigCode');
-    if (bigCode) bigCode.textContent = state.bigCode;
+    if (bigCode) bigCode.textContent = state.unitNumber;
 
     const grossLb = state.weights.grossLb;
     const netLb = state.weights.netLb;
@@ -59,14 +59,14 @@ function updatePreview() {
     if (tareLbEl) tareLbEl.textContent = tareLb.toFixed(1);
 
     const unit = document.getElementById('unitNumber');
-    if (unit) unit.textContent = state.unitNumber;
+    if (unit) unit.textContent = state.bigCode;
 
     const canvas = document.getElementById('barcodeCanvas');
     if (canvas) drawBarcode(canvas, buildBarcodePayload());
 
     const productEl = document.getElementById('productName');
     const sourceEl = document.getElementById('sourceChosen');
-    if (productEl) productEl.textContent = state.selectedProduct || state.bigCode || '—';
+    if (productEl) productEl.textContent = state.bigCode || '—';
     if (sourceEl) {
         const group = state.activeGroup;
         const letter = group ? state.source[group] : null;

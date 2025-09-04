@@ -258,7 +258,7 @@ function updatePreview() {
     )}:${pad(now.getSeconds())}`;
     document.getElementById("pkgDate").textContent = stamp;
 
-    document.getElementById("bigCode").textContent = state.bigCode;
+    document.getElementById("bigCode").textContent = state.unitNumber;
 
     const grossLb = state.weights.grossLb;
     const netLb = state.weights.netLb;
@@ -274,7 +274,7 @@ function updatePreview() {
         tareLbEl.textContent = tareLb.toFixed(1);
     }
 
-    document.getElementById("unitNumber").textContent = state.unitNumber;
+    document.getElementById("unitNumber").textContent = state.bigCode;
     drawBarcode(
         document.getElementById("barcodeCanvas"),
         buildBarcodePayload()
@@ -285,7 +285,7 @@ function updatePreview() {
     const sourceEl = document.getElementById("sourceChosen");
     const allSelEl = document.getElementById("allSelections");
     if (productEl)
-        productEl.textContent = state.selectedProduct || state.bigCode || "—";
+        productEl.textContent = state.bigCode || "—";
     if (sourceEl) {
         const group = state.activeGroup;
         const letter = group ? state.source[group] : null;
@@ -320,9 +320,7 @@ function buildBarcodePayload() {
     const sp = state.source.special
         ? ` SP ${sanitizeCode39(state.source.special)}`
         : "";
-    const product = sanitizeCode39(
-        state.selectedProduct || state.bigCode || "NA"
-    );
+    const product = sanitizeCode39(state.bigCode || "NA");
     const net = Number(state.weights.netLb || 0).toFixed(1);
     const gro = Number(state.weights.grossLb || 0).toFixed(1);
     const tar = Number(state.weights.tareLb || 0).toFixed(1);
@@ -433,7 +431,7 @@ function buildLogRecord() {
     return {
         timestamp: toIso(now),
         unitNumber: state.unitNumber,
-        product: state.selectedProduct || state.bigCode,
+        product: state.bigCode,
         sourceGroup: group,
         sourceLetter: letter,
         special: state.source.special || "",

@@ -7,7 +7,7 @@ export function buildBarcodePayload() {
     const letter = group ? state.source[group] || '' : '';
     const src = group && letter ? `${group.toUpperCase()}-${letter}` : 'NA';
     const sp = state.source.special ? ` SP ${sanitizeCode39(state.source.special)}` : '';
-    const product = sanitizeCode39(state.selectedProduct || state.bigCode || 'NA');
+    const product = sanitizeCode39(state.bigCode || 'NA');
     const net = Number(state.weights.netLb || 0).toFixed(1);
     const gro = Number(state.weights.grossLb || 0).toFixed(1);
     const tar = Number(state.weights.tareLb || 0).toFixed(1);
