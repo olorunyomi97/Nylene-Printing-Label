@@ -11,9 +11,11 @@ export function drawBarcode(canvas, text) {
                 format: 'CODE128',
                 displayValue: false,
                 background: '#ffffff00',
-                margin: 10,
-                width: 1,
-                height: canvas.height - 20,
+                lineColor: '#000000',
+                margin: 10,              // quiet zone
+                width: 2,                // bar width for better readability
+                height: Math.max(40, canvas.height - 20),
+                textMargin: 0,
             });
             return;
         } catch (e) {
