@@ -25,7 +25,7 @@ export function buildLogRecord() {
     return {
         timestamp: toIso(now),
         unitNumber: state.unitNumber,
-        product: state.selectedProduct || state.bigCode,
+        product: state.bigCode,
         sourceGroup: group,
         sourceLetter: letter,
         special: state.source.special || '',
