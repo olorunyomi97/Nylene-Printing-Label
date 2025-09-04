@@ -14,7 +14,7 @@ export function initPreviewStep() {
     const clear = document.getElementById("clearPreview");
     if (clear)
         clear.addEventListener("click", () => {
-            state.unitNumber = state.unitNumber; // keep same by default
+            state.unitNumber = state.unitNumber; // keep same by default/
             updatePreview();
         });
 
