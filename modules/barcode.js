@@ -13,7 +13,7 @@ export function drawBarcode(canvas, text) {
                 background: "#ffffff00",
                 lineColor: "#000000",
                 margin: 10, // quiet zone
-                width: 2, // bar width for better readability
+                width: 1, // narrower bars to shorten overall length
                 height: Math.max(40, canvas.height - 20),
                 textMargin: 0,
             });
