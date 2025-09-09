@@ -3,6 +3,7 @@ import { lbToKg } from "../utils/format.js";
 import { drawBarcode } from "../barcode.js";
 import { buildBarcodePayload } from "../payload.js";
 import { appendLogRecord, bindExcelButton } from "../logs.js";
+import { showScreen } from "../state.js";
 import { appendHistoryRecord } from "../history.js";
 
 export function initPreviewStep() {
@@ -21,16 +22,27 @@ export function initPreviewStep() {
 
     const printBtn = document.getElementById("printBtn");
     if (printBtn)
-        printBtn.addEventListener("click", async () => {
+        printBtn.addEventListener("click", () => {
             updatePreview();
-            try {
-                await appendLogRecord();
-                appendHistoryRecord();
-            } catch (err) {
-                console.error("Log append failed", err);
-                alert("Logging failed. The label will still print.");
-            }
+            const handleAfterPrint = async () => {
+                try {
+                    await appendLogRecord();
+                    appendHistoryRecord();
+                } catch (err) {
+                    console.error("Log append failed after print", err);
+                    alert("Saving log failed after printing.");
+                } finally {
+                    window.removeEventListener("afterprint", handleAfterPrint);
+                }
+            };
+            window.addEventListener("afterprint", handleAfterPrint, { once: true });
             window.print();
+        });
+
+    const openDbBtn = document.getElementById("openLabelDb");
+    if (openDbBtn)
+        openDbBtn.addEventListener("click", () => {
+            showScreen("labeldb");
         });
 
     bindExcelButton();
