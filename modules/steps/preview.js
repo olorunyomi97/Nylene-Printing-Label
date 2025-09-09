@@ -3,6 +3,7 @@ import { lbToKg } from "../utils/format.js";
 import { drawBarcode } from "../barcode.js";
 import { buildBarcodePayload } from "../payload.js";
 import { appendLogRecord, bindExcelButton } from "../logs.js";
+import { appendHistoryRecord } from "../history.js";
 
 export function initPreviewStep() {
     document.addEventListener("updatePreview", updatePreview);
@@ -24,6 +25,7 @@ export function initPreviewStep() {
             updatePreview();
             try {
                 await appendLogRecord();
+                appendHistoryRecord();
             } catch (err) {
                 console.error("Log append failed", err);
                 alert("Logging failed. The label will still print.");
