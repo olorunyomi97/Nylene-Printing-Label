@@ -1,8 +1,9 @@
 export function generateUnitNumber() {
     const now = new Date();
-    const doy = getDayOfYear(now);
+    const effective = apply1201Rule(now);
+    const doy = getDayOfYear(effective);
     const doyStr = String(doy).padStart(3, '0');
-    const seq = getAndIncrementDailySequence(now);
+    const seq = getAndIncrementDailySequence(effective);
     const seqStr = String(seq).padStart(3, '0');
     return `AC15${doyStr}${seqStr}`;
 }
@@ -36,6 +37,17 @@ function getAndIncrementDailySequence(date) {
         window.__fallbackSeq += 1;
         return window.__fallbackSeq;
     }
+}
+
+// For times between 00:00 and 00:01 inclusive, treat as previous day
+function apply1201Rule(date) {
+    const d = new Date(date);
+    const minutesSinceMidnight = d.getHours() * 60 + d.getMinutes();
+    if (minutesSinceMidnight < 1) {
+        // subtract one minute to go to previous day window
+        d.setMinutes(d.getMinutes() - 1);
+    }
+    return d;
 }
 
 export function generateBigCode() {
