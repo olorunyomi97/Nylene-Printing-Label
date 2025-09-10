@@ -23,6 +23,44 @@ export function initPreviewStep() {
     const printBtn = document.getElementById("printBtn");
     if (printBtn)
         printBtn.addEventListener("click", () => {
+            // If reprint mode is active, temporarily swap preview to the last printed snapshot
+            if (state.reprintAvailable && state.lastPrinted) {
+                const previous = {
+                    unitNumber: state.unitNumber,
+                    bigCode: state.bigCode,
+                    weights: { ...state.weights },
+                    source: { ...state.source },
+                    activeGroup: state.activeGroup,
+                    previewTimestamp: state.previewTimestamp,
+                };
+
+                // Override state with last printed snapshot for preview/print only
+                state.unitNumber = state.lastPrinted.unitNumber;
+                state.bigCode = state.lastPrinted.bigCode;
+                state.weights = { ...state.lastPrinted.weights };
+                state.source = { ...state.lastPrinted.source };
+                state.activeGroup = state.lastPrinted.activeGroup;
+                state.previewTimestamp = state.lastPrinted.printedAt;
+                updatePreview();
+
+                const restoreAfterPrint = () => {
+                    state.unitNumber = previous.unitNumber;
+                    state.bigCode = previous.bigCode;
+                    state.weights = { ...previous.weights };
+                    state.source = { ...previous.source };
+                    state.activeGroup = previous.activeGroup;
+                    state.previewTimestamp = previous.previewTimestamp;
+                    // After a reprint completes, return button to normal print mode
+                    state.reprintAvailable = false;
+                    updatePreview();
+                    window.removeEventListener("afterprint", restoreAfterPrint);
+                };
+                window.addEventListener("afterprint", restoreAfterPrint, { once: true });
+                window.print();
+                return;
+            }
+
+            // Normal first-time print flow
             updatePreview();
             const handleAfterPrint = async () => {
                 try {
@@ -40,6 +78,7 @@ export function initPreviewStep() {
                         source: { ...state.source },
                         activeGroup: state.activeGroup,
                     };
+                    state.reprintAvailable = true;
                     // Prepare next displayed number without incrementing storage yet
                     state.unitNumber = generateUnitNumber();
                 } catch (err) {
@@ -47,6 +86,7 @@ export function initPreviewStep() {
                     alert("Saving log failed after printing.");
                 } finally {
                     window.removeEventListener("afterprint", handleAfterPrint);
+                    updatePreview();
                 }
             };
             window.addEventListener("afterprint", handleAfterPrint, { once: true });
@@ -112,4 +152,11 @@ function updatePreview() {
                 ? `${group.toUpperCase()} ${letter}${special}`
                 : "—";
     }
+
+    // Update the print button label according to mode
+    const printBtn = document.getElementById("printBtn");
+    if (printBtn)
+        printBtn.textContent = state.reprintAvailable && state.lastPrinted
+            ? "Reprint"
+            : "Print";
 }
