@@ -30,6 +30,16 @@ export function initPreviewStep() {
                     appendHistoryRecord();
                     // Commit the sequence only after print completes
                     const committed = commitPrintedUnitNumber();
+                    // Save snapshot of what was printed for reprint
+                    const printedAt = new Date().toISOString();
+                    state.lastPrinted = {
+                        printedAt,
+                        unitNumber: committed,
+                        bigCode: state.bigCode,
+                        weights: { ...state.weights },
+                        source: { ...state.source },
+                        activeGroup: state.activeGroup,
+                    };
                     // Prepare next displayed number without incrementing storage yet
                     state.unitNumber = generateUnitNumber();
                 } catch (err) {
@@ -53,7 +63,7 @@ export function initPreviewStep() {
 }
 
 function updatePreview() {
-    const now = new Date();
+    const now = state.previewTimestamp ? new Date(state.previewTimestamp) : new Date();
     const pad = (n) => String(n).padStart(2, "0");
     const stamp = `${pad(now.getMonth() + 1)}/${pad(
         now.getDate()
