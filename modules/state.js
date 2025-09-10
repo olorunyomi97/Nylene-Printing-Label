@@ -13,6 +13,8 @@ export const state = {
     lastPrinted: null,
     // Optional override for preview timestamp (used during reprint)
     previewTimestamp: null,
+    // Whether the next click should reprint the last label
+    reprintAvailable: false,
 };
 
 export const screens = {
