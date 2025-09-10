@@ -34,5 +34,46 @@ export function initSourceStep() {
         showScreen('products');
         document.dispatchEvent(new CustomEvent('renderProductList'));
     });
+
+    // Reprint last printed label
+    const reprintBtn = document.getElementById('btnReprint');
+    if (reprintBtn) reprintBtn.addEventListener('click', () => {
+        const snap = state.lastPrinted;
+        if (!snap) {
+            alert('No previous label to reprint.');
+            return;
+        }
+        // Save current working state to restore after printing
+        const saved = {
+            unitNumber: state.unitNumber,
+            bigCode: state.bigCode,
+            weights: { ...state.weights },
+            source: { ...state.source },
+            activeGroup: state.activeGroup,
+            previewTimestamp: state.previewTimestamp,
+        };
+
+        // Apply snapshot state for reprint
+        state.unitNumber = snap.unitNumber;
+        state.bigCode = snap.bigCode;
+        state.weights = { ...snap.weights };
+        state.source = { ...snap.source };
+        state.activeGroup = snap.activeGroup || null;
+        state.previewTimestamp = snap.printedAt || snap.timestamp || null;
+
+        // Render the preview with snapshot data and print
+        document.dispatchEvent(new CustomEvent('updatePreview'));
+        const restore = () => {
+            state.unitNumber = saved.unitNumber;
+            state.bigCode = saved.bigCode;
+            state.weights = saved.weights;
+            state.source = saved.source;
+            state.activeGroup = saved.activeGroup;
+            state.previewTimestamp = saved.previewTimestamp || null;
+            window.removeEventListener('afterprint', restore);
+        };
+        window.addEventListener('afterprint', restore, { once: true });
+        window.print();
+    });
 }
 
