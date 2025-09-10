@@ -9,6 +9,10 @@ export const state = {
     unitNumber: generateUnitNumber(),
     bigCode: generateBigCode(),
     excelHandle: null,
+    // Last successfully printed label snapshot for reprint
+    lastPrinted: null,
+    // Optional override for preview timestamp (used during reprint)
+    previewTimestamp: null,
 };
 
 export const screens = {
