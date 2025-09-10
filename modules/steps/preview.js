@@ -3,7 +3,6 @@ import { lbToKg } from "../utils/format.js";
 import { drawBarcode } from "../barcode.js";
 import { buildBarcodePayload } from "../payload.js";
 import { appendLogRecord, bindExcelButton } from "../logs.js";
-import { showScreen } from "../state.js";
 import { appendHistoryRecord } from "../history.js";
 
 export function initPreviewStep() {
