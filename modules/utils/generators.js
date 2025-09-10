@@ -3,7 +3,7 @@ export function generateUnitNumber() {
     const effective = apply1201Rule(now);
     const doy = getDayOfYear(effective);
     const doyStr = String(doy).padStart(3, '0');
-    const seq = getAndIncrementDailySequence(effective);
+    const seq = getNextDailySequence(effective);
     const seqStr = String(seq).padStart(3, '0');
     return `AC15${doyStr}${seqStr}`;
 }
@@ -16,6 +16,20 @@ function getDayOfYear(date) {
 }
 
 const SEQ_STORE_KEY = 'unit_seq_store_v1';
+function getNextDailySequence(date) {
+    try {
+        const y = date.getFullYear();
+        const doy = getDayOfYear(date);
+        const key = `${y}-${doy}`;
+        const raw = localStorage.getItem(SEQ_STORE_KEY);
+        const store = raw ? JSON.parse(raw) : {};
+        const current = store[key] || 0;
+        return current + 1;
+    } catch {
+        if (!window.__fallbackSeq) window.__fallbackSeq = 0;
+        return window.__fallbackSeq + 1;
+    }
+}
 function getAndIncrementDailySequence(date) {
     try {
         const y = date.getFullYear();
@@ -48,6 +62,18 @@ function apply1201Rule(date) {
         d.setMinutes(d.getMinutes() - 1);
     }
     return d;
+}
+
+// Commit the currently displayed unit number by incrementing the stored daily sequence.
+// Returns the committed unit number string that was just reserved/printed.
+export function commitPrintedUnitNumber() {
+    const now = new Date();
+    const effective = apply1201Rule(now);
+    const doy = getDayOfYear(effective);
+    const doyStr = String(doy).padStart(3, '0');
+    const seq = getAndIncrementDailySequence(effective);
+    const seqStr = String(seq).padStart(3, '0');
+    return `AC15${doyStr}${seqStr}`;
 }
 
 export function generateBigCode() {
