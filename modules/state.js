@@ -16,6 +16,7 @@ export const screens = {
     products: null,
     weights: null,
     preview: null,
+    labeldb: null,
 };
 
 export function showScreen(name) {
