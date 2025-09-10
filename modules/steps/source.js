@@ -1,4 +1,5 @@
 import { state, showScreen } from '../state.js';
+import { loadLogs } from '../logs.js';
 
 export function initSourceStep() {
     document.querySelectorAll('.btn-col[data-group] .option').forEach((btn) => {
@@ -38,10 +39,35 @@ export function initSourceStep() {
     // Reprint last printed label
     const reprintBtn = document.getElementById('btnReprint');
     if (reprintBtn) reprintBtn.addEventListener('click', () => {
-        const snap = state.lastPrinted;
+        let snap = state.lastPrinted;
+        // If no in-memory snapshot, attempt to recover from persisted logs
         if (!snap) {
-            alert('No previous label to reprint.');
-            return;
+            const logs = loadLogs();
+            const last = logs[logs.length - 1];
+            if (last) {
+                const source = { silo: null, dryer: null, compound: null, special: last.special || null };
+                if (last.sourceGroup && last.sourceLetter) {
+                    source[last.sourceGroup] = last.sourceLetter;
+                }
+                snap = {
+                    printedAt: last.timestamp,
+                    unitNumber: last.unitNumber,
+                    bigCode: last.product,
+                    weights: {
+                        grossLb: Number(last.grossLb || 0),
+                        netLb: Number(last.netLb || 0),
+                        tareLb: Number(last.tareLb || 0),
+                    },
+                    source,
+                    activeGroup: last.sourceGroup || null,
+                };
+                // Cache for subsequent quick reprints
+                state.lastPrinted = snap;
+                state.reprintAvailable = true;
+            } else {
+                alert('No previous label to reprint.');
+                return;
+            }
         }
         // Save current working state to restore after printing
         const saved = {
