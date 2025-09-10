@@ -1,4 +1,5 @@
 import { state, showScreen } from "../state.js";
+import { generateUnitNumber, commitPrintedUnitNumber } from "../utils/generators.js";
 import { lbToKg } from "../utils/format.js";
 import { drawBarcode } from "../barcode.js";
 import { buildBarcodePayload } from "../payload.js";
@@ -27,6 +28,10 @@ export function initPreviewStep() {
                 try {
                     await appendLogRecord();
                     appendHistoryRecord();
+                    // Commit the sequence only after print completes
+                    const committed = commitPrintedUnitNumber();
+                    // Prepare next displayed number without incrementing storage yet
+                    state.unitNumber = generateUnitNumber();
                 } catch (err) {
                     console.error("Log append failed after print", err);
                     alert("Saving log failed after printing.");
