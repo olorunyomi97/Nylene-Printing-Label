@@ -4,6 +4,7 @@ import { initSourceStep } from './steps/source.js';
 import { initProductsStep } from './steps/products.js';
 import { initWeightsStep } from './steps/weights.js';
 import { initPreviewStep } from './steps/preview.js';
+import { initScanStep } from './steps/scan.js';
 import { initLabelDatabaseStep } from './steps/labeldatabase.js';
 import { initScanner } from './scanner.js';
 
@@ -15,14 +16,15 @@ async function loadFragment(path) {
 
 async function bootstrap() {
     const app = document.getElementById('app');
-    const [src, prod, wts, prv, ldb] = await Promise.all([
+    const [src, prod, wts, prv, ldb, scn] = await Promise.all([
         loadFragment('/screens/source.html'),
         loadFragment('/screens/products.html'),
         loadFragment('/screens/weights.html'),
         loadFragment('/screens/preview.html'),
         loadFragment('/screens/labeldatabase.html'),
+        loadFragment('/screens/scan.html'),
     ]);
-    app.innerHTML = `${src}${prod}${wts}${prv}${ldb}`;
+    app.innerHTML = `${src}${prod}${wts}${prv}${ldb}${scn}`;
 
     // Reconnect screen references after HTML injection
     screens.source = document.getElementById('screen-source');
@@ -30,6 +32,7 @@ async function bootstrap() {
     screens.weights = document.getElementById('screen-weights');
     screens.preview = document.getElementById('screen-preview');
     screens.labeldb = document.getElementById('screen-labeldb');
+    screens.scan = document.getElementById('screen-scan');
 
     // Initialize steps
     initSourceStep();
@@ -37,24 +40,14 @@ async function bootstrap() {
     initWeightsStep();
     initPreviewStep();
     initLabelDatabaseStep();
+    initScanStep();
 
-    // Initialize scanner toast on scan
+    // Initialize scanner: store details and navigate to the scan screen
     initScanner(({ raw, parsed, info, error }) => {
-        const detailLines = [];
-        if (error) detailLines.push('Scan error');
-        if (parsed) {
-            if (parsed.product) detailLines.push(`Product: ${parsed.product}`);
-            if (parsed.unitNumber) detailLines.push(`Unit: ${parsed.unitNumber}`);
-            if (parsed.net) detailLines.push(`Net: ${parsed.net} LBS`);
-        }
-        if (info) {
-            if (info.sourceGroup || info.sourceLetter) {
-                const sg = (info.sourceGroup || '').toUpperCase();
-                const sl = info.sourceLetter || '';
-                detailLines.push(`Source: ${sg}${sl ? '-' + sl : ''}`);
-            }
-        }
-        showToast(`Scanned: ${raw}`, detailLines.join(' · '));
+        state.lastScan = { raw, parsed, info, error };
+        const ev = new Event('updateScanDetails');
+        document.dispatchEvent(ev);
+        showScreen('scan');
     });
 
     showScreen('source');
