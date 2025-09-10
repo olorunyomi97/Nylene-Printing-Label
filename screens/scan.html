@@ -1,0 +1,39 @@
+<section id="screen-scan" class="screen">
+    <header class="screen-header">
+        <button id="backFromScan" class="pill small">Back</button>
+        <h1>Scan Details</h1>
+    </header>
+
+    <div class="card">
+        <div class="muted-text">Most recent scan. No barcode is displayed.</div>
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap:16px;">
+            <div>
+                <div class="w-title">Unit Number</div>
+                <div id="scanUnit">—</div>
+            </div>
+            <div>
+                <div class="w-title">Product</div>
+                <div id="scanProduct">—</div>
+            </div>
+            <div>
+                <div class="w-title">Source</div>
+                <div id="scanSource">—</div>
+            </div>
+            <div>
+                <div class="w-title">Net Weight (lbs)</div>
+                <div id="scanNet">—</div>
+            </div>
+            <div>
+                <div class="w-title">Tare Weight (lbs)</div>
+                <div id="scanTare">—</div>
+            </div>
+            <div>
+                <div class="w-title">Gross Weight (lbs)</div>
+                <div id="scanGross">—</div>
+            </div>
+        </div>
+        <div class="muted-text" style="margin-top:12px">Raw</div>
+        <div id="scanRaw" class="card" style="padding:12px; overflow:auto; white-space:pre-wrap;">—</div>
+    </div>
+</section>
+

@@ -15,6 +15,8 @@ export const state = {
     previewTimestamp: null,
     // Whether the next click should reprint the last label
     reprintAvailable: false,
+    // Last scan payload and derived info
+    lastScan: null,
 };
 
 export const screens = {
@@ -23,6 +25,7 @@ export const screens = {
     weights: null,
     preview: null,
     labeldb: null,
+    scan: null,
 };
 
 export function showScreen(name) {
