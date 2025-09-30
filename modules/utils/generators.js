@@ -1,11 +1,13 @@
-export function generateUnitNumber() {
+export function generateUnitNumber(sourceGroup, sourceLetter) {
     const now = new Date();
     const effective = apply1201Rule(now);
     const doy = getDayOfYear(effective);
     const doyStr = String(doy).padStart(3, "0");
     const seq = getNextDailySequence(effective);
     const seqStr = String(seq).padStart(3, "0");
-    return `AC15${doyStr}${seqStr}`;
+    const prefix = resolvePrefix(sourceGroup, sourceLetter);
+    const yearDigit = String(effective.getFullYear()).slice(-1);
+    return `${prefix}1${yearDigit}${doyStr}${seqStr}`;
 }
 
 function getDayOfYear(date) {
@@ -66,14 +68,16 @@ function apply1201Rule(date) {
 
 // Commit the currently displayed unit number by incrementing the stored daily sequence.
 // Returns the committed unit number string that was just reserved/printed.
-export function commitPrintedUnitNumber() {
+export function commitPrintedUnitNumber(sourceGroup, sourceLetter) {
     const now = new Date();
     const effective = apply1201Rule(now);
     const doy = getDayOfYear(effective);
     const doyStr = String(doy).padStart(3, "0");
     const seq = getAndIncrementDailySequence(effective);
     const seqStr = String(seq).padStart(3, "0");
-    return `AC15${doyStr}${seqStr}`;
+    const prefix = resolvePrefix(sourceGroup, sourceLetter);
+    const yearDigit = String(effective.getFullYear()).slice(-1);
+    return `${prefix}1${yearDigit}${doyStr}${seqStr}`;
 }
 
 export function generateBigCode() {
@@ -82,4 +86,30 @@ export function generateBigCode() {
     for (let i = 0; i < 7; i++)
         out += alphabet[Math.floor(Math.random() * alphabet.length)];
     return out;
+}
+
+// Prefix resolution based on selected source
+// - Dryer: A->AD, B->BD, C->CD, D->DE
+// - Silo/Bulk: A->AS, B->BS, C->CS, D->DS
+// - Compound: A->AC, B->BC
+// Fallback to 'AC' if missing/unknown
+function resolvePrefix(sourceGroup, sourceLetter) {
+    const group = String(sourceGroup || "").toLowerCase();
+    const letter = String(sourceLetter || "").toUpperCase();
+    if (!group || !letter) return "AC";
+    if (group === "dryer") {
+        if (letter === "A") return "AD";
+        if (letter === "B") return "BD";
+        if (letter === "C") return "CD";
+        if (letter === "D") return "DE";
+    } else if (group === "silo" || group === "bulk") {
+        if (letter === "A") return "AS";
+        if (letter === "B") return "BS";
+        if (letter === "C") return "CS";
+        if (letter === "D") return "DS";
+    } else if (group === "compound") {
+        if (letter === "A") return "AC";
+        if (letter === "B") return "BC";
+    }
+    return "AC";
 }
