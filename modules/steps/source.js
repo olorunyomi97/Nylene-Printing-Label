@@ -1,4 +1,5 @@
 import { state, showScreen } from "../state.js";
+import { generateUnitNumber } from "../utils/generators.js";
 import { loadLogs } from "../logs.js";
 
 export function initSourceStep() {
@@ -11,6 +12,8 @@ export function initSourceStep() {
             btn.classList.add("selected");
             state.source[group] = btn.dataset.value;
             state.activeGroup = group;
+            // Regenerate the unit number to reflect the new prefix mapping
+            state.unitNumber = generateUnitNumber(group, state.source[group]);
             state.selectedProduct = null;
             showScreen("products");
             document.dispatchEvent(new CustomEvent("renderProductList"));

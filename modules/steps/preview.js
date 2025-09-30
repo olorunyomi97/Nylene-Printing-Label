@@ -67,7 +67,9 @@ export function initPreviewStep() {
                     await appendLogRecord();
                     appendHistoryRecord();
                     // Commit the sequence only after print completes
-                    const committed = commitPrintedUnitNumber();
+                    const group = state.activeGroup;
+                    const letter = group ? state.source[group] : undefined;
+                    const committed = commitPrintedUnitNumber(group, letter);
                     // Save snapshot of what was printed for reprint
                     const printedAt = new Date().toISOString();
                     state.lastPrinted = {
@@ -80,7 +82,7 @@ export function initPreviewStep() {
                     };
                     state.reprintAvailable = true;
                     // Prepare next displayed number without incrementing storage yet
-                    state.unitNumber = generateUnitNumber();
+                    state.unitNumber = generateUnitNumber(group, letter);
                 } catch (err) {
                     console.error("Log append failed after print", err);
                     alert("Saving log failed after printing.");
