@@ -1,63 +1,62 @@
 <section id="screen-preview" class="screen">
     <header class="screen-header">
-        <button id="backToWeights" class="pill small">Modifyy</button>
+        <button id="backToWeights" class="pill small">Modify</button>
         <h1>PRINT PREVIEW</h1>
     </header>
     <div class="preview-layout">
         <div class="label-canvas" id="labelCanvas">
-            <img
-                class="logo"
-                alt="Logo"
-                width="20%"
-                height="'20%"
-                src="https://nylene.com/wp-content/uploads/2023/03/NYLENE-LOGO-Web.svg"
-            />
-            <div class="label-header">
-                <div class="made">
-                    PACKAGED/EMBALLÉ ON <span id="pkgDate"></span><br />MADE IN
-                    CANADA - FABRIQUÉ AU CANAD
+            <!-- Left vertical unit number -->
+            <div class="unit-vert">
+                <div id="unitVertical">—</div>
+            </div>
+
+            <!-- Main content column -->
+            <div class="content-col">
+                <div class="label-header">
+                    <div class="made">
+                        PACKAGED/EMBALLÉ ON <span id="pkgDate"></span> AT
+                        <span id="pkgTime"></span><br />MADE IN CANADA – FABRIQUÉ AU CANADA
+                    </div>
+                </div>
+
+                <div class="w-title box-title">BOX NUMBER / NUMÉRO DE BOÎTE</div>
+                <div class="big-code" id="bigCode"></div>
+
+                <div class="weights">
+                    <div>
+                        <div class="w-title">GROSS WT / POIDS BRUT</div>
+                        <div class="w-values">
+                            <span id="grossKg">0.0</span> KGS
+                            <span id="grossLb">0.0</span> LBS
+                        </div>
+                    </div>
+                    <div>
+                        <div class="w-title">NET WT / POIDS NET</div>
+                        <div class="w-values">
+                            <span id="netKg">0.0</span> KGS
+                            <span id="netLb">0.0</span> LBS
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-row">
+                    <div class="unit-block">
+                        <div class="unit-title">UNIT NUMBER / NUMÉRO DE L'UNITÉ</div>
+                        <div class="unit"><span id="unitNumber">—</span></div>
+                        <div class="material"><span id="productName">—</span></div>
+                    </div>
+                    <div class="barcode">
+                        <canvas id="barcodeCanvas" width="100%" height="100%"></canvas>
+                    </div>
                 </div>
             </div>
-            <div class="w-title box-title">BOX NUMBER / NUMÉRO DE BOÎTE</div>
-            <div class="big-code" id="bigCode"></div>
-            <div class="weights">
-                <div>
-                    <div class="w-title">GROSS WT / POIDS BRUT</div>
-                    <div class="w-values">
-                        <span id="grossKg">0.0</span> KGS
-                        <span id="grossLb">0.0</span> LBS
-                    </div>
-                </div>
-                <div>
-                    <div class="w-title">NET WT / POIDS NET</div>
-                    <div class="w-values">
-                        <span id="netKg">0.0</span> KGS
-                        <span id="netLb">0.0</span> LBS
-                    </div>
-                </div>
-                <div>
-                    <div class="w-title">TARE WT / POIDS DE TARE</div>
-                    <div class="w-values">
-                        <span id="tareKg">0.0</span> KGS
-                        <span id="tareLb">0.0</span> LBS
-                    </div>
-                </div>
-                <div>
-                    <div class="w-title">PRODUCT / PRODUIT</div>
-                    <div class="w-values">
-                        <span id="productName">—</span><br />
-                    </div>
-                </div>
-            </div>
-            <div class="footer-row">
-                <div class="material"></div>
-                <div class="barcode">
-                    <canvas
-                        id="barcodeCanvas"
-                        width="100%"
-                        height="100%"
-                    ></canvas>
-                </div>
+
+            <!-- Right vertical logo -->
+            <div class="logo-vert">
+                <img
+                    alt="Logo"
+                    src="https://nylene.com/wp-content/uploads/2023/03/NYLENE-LOGO-Web.svg"
+                />
             </div>
         </div>
         <div class="preview-actions">
