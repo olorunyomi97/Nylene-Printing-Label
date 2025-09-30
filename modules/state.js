@@ -6,7 +6,7 @@ export const state = {
     activeGroup: null,
     selectedProduct: null,
     weights: { netLb: 0, grossLb: 0, tareLb: 0 },
-    unitNumber: generateUnitNumber(null, null),
+    unitNumber: generateUnitNumber(),
     bigCode: generateBigCode(),
     excelHandle: null,
     // Last successfully printed label snapshot for reprint

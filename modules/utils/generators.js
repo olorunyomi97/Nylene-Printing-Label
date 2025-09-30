@@ -1,13 +1,11 @@
-export function generateUnitNumber(sourceGroup, sourceLetter) {
+export function generateUnitNumber() {
     const now = new Date();
     const effective = apply1201Rule(now);
     const doy = getDayOfYear(effective);
     const doyStr = String(doy).padStart(3, '0');
     const seq = getNextDailySequence(effective);
     const seqStr = String(seq).padStart(3, '0');
-    const prefix = getPrefixFor(sourceGroup, sourceLetter);
-    const yearDigit = String(effective.getFullYear()).slice(-1);
-    return `${prefix}1${yearDigit}${doyStr}${seqStr}`;
+    return `AC15${doyStr}${seqStr}`;
 }
 
 function getDayOfYear(date) {
@@ -66,43 +64,16 @@ function apply1201Rule(date) {
     return d;
 }
 
-function getPrefixFor(sourceGroup, sourceLetter) {
-    const group = (sourceGroup || '').toLowerCase();
-    const letter = (sourceLetter || '').toUpperCase();
-    // Mapping rules:
-    // Dryer: A->AD, B->BD, C->CD, D->DE
-    // Silo (Bulk): A->AS, B->BS, C->CS, D->DB ("D bulk")
-    // Compound: A->AC, B->BC
-    if (group === 'dryer') {
-        if (letter === 'A') return 'AD';
-        if (letter === 'B') return 'BD';
-        if (letter === 'C') return 'CD';
-        if (letter === 'D') return 'DE';
-    } else if (group === 'silo') {
-        if (letter === 'A') return 'AS';
-        if (letter === 'B') return 'BS';
-        if (letter === 'C') return 'CS';
-        if (letter === 'D') return 'DB';
-    } else if (group === 'compound') {
-        if (letter === 'A') return 'AC';
-        if (letter === 'B') return 'BC';
-    }
-    // Fallback to existing default if unknown
-    return 'AC';
-}
-
 // Commit the currently displayed unit number by incrementing the stored daily sequence.
 // Returns the committed unit number string that was just reserved/printed.
-export function commitPrintedUnitNumber(sourceGroup, sourceLetter) {
+export function commitPrintedUnitNumber() {
     const now = new Date();
     const effective = apply1201Rule(now);
     const doy = getDayOfYear(effective);
     const doyStr = String(doy).padStart(3, '0');
     const seq = getAndIncrementDailySequence(effective);
     const seqStr = String(seq).padStart(3, '0');
-    const prefix = getPrefixFor(sourceGroup, sourceLetter);
-    const yearDigit = String(effective.getFullYear()).slice(-1);
-    return `${prefix}1${yearDigit}${doyStr}${seqStr}`;
+    return `AC15${doyStr}${seqStr}`;
 }
 
 export function generateBigCode() {
