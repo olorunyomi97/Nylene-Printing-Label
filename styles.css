@@ -224,7 +224,7 @@ body {
     height: 48px;
 }
 .big-code {
-    font-size: 80px;
+    font-size: 100px;
     font-weight: 800;
     letter-spacing: 4px;
     text-align: left;
@@ -236,7 +236,7 @@ body {
     gap: 10px;
 }
 .w-title {
-    font-size: 14px;
+    font-size: 40px;
     font-weight: 700;
 }
 .box-title {
@@ -329,7 +329,7 @@ body {
     z-index: 9999;
 }
 .toast {
-    background: rgba(0,0,0,0.85);
+    background: rgba(0, 0, 0, 0.85);
     color: #fff;
     padding: 10px 14px;
     border-radius: 8px;
@@ -337,8 +337,8 @@ body {
     max-width: 90vw;
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity .25s ease, transform .25s ease;
-    box-shadow: 0 6px 20px rgba(0,0,0,.35);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 .toast.show {
     opacity: 1;
