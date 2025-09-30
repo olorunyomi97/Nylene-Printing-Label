@@ -107,12 +107,13 @@ export function initPreviewStep() {
 function updatePreview() {
     const now = state.previewTimestamp ? new Date(state.previewTimestamp) : new Date();
     const pad = (n) => String(n).padStart(2, "0");
-    const dateStr = `${pad(now.getMonth() + 1)}/${pad(now.getDate())}/${now.getFullYear()}`;
-    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    const stamp = `${pad(now.getMonth() + 1)}/${pad(
+        now.getDate()
+    )}/${now.getFullYear()} ${pad(now.getHours())}:${pad(
+        now.getMinutes()
+    )}:${pad(now.getSeconds())}`;
     const pkgDate = document.getElementById("pkgDate");
-    if (pkgDate) pkgDate.textContent = dateStr;
-    const pkgTime = document.getElementById("pkgTime");
-    if (pkgTime) pkgTime.textContent = timeStr;
+    if (pkgDate) pkgDate.textContent = stamp;
 
     const bigCode = document.getElementById("bigCode");
     if (bigCode) bigCode.textContent = state.unitNumber;
@@ -134,9 +135,7 @@ function updatePreview() {
     if (tareLbEl) tareLbEl.textContent = tareLb.toFixed(1);
 
     const unit = document.getElementById("unitNumber");
-    if (unit) unit.textContent = state.unitNumber;
-    const unitVert = document.getElementById("unitVertical");
-    if (unitVert) unitVert.textContent = state.unitNumber;
+    if (unit) unit.textContent = state.bigCode;
 
     const canvas = document.getElementById("barcodeCanvas");
     if (canvas) drawBarcode(canvas, buildBarcodePayload());
