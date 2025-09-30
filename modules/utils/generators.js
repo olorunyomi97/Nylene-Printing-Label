@@ -2,9 +2,9 @@ export function generateUnitNumber(sourceGroup, sourceLetter) {
     const now = new Date();
     const effective = apply1201Rule(now);
     const doy = getDayOfYear(effective);
-    const doyStr = String(doy).padStart(3, '0');
+    const doyStr = String(doy).padStart(3, "0");
     const seq = getNextDailySequence(effective);
-    const seqStr = String(seq).padStart(3, '0');
+    const seqStr = String(seq).padStart(3, "0");
     const prefix = getPrefixFor(sourceGroup, sourceLetter);
     const yearDigit = String(effective.getFullYear()).slice(-1);
     return `${prefix}1${yearDigit}${doyStr}${seqStr}`;
@@ -17,7 +17,7 @@ function getDayOfYear(date) {
     return Math.floor(diffMs / oneDayMs) + 1;
 }
 
-const SEQ_STORE_KEY = 'unit_seq_store_v1';
+const SEQ_STORE_KEY = "unit_seq_store_v1";
 function getNextDailySequence(date) {
     try {
         const y = date.getFullYear();
@@ -67,28 +67,30 @@ function apply1201Rule(date) {
 }
 
 function getPrefixFor(sourceGroup, sourceLetter) {
-    const group = (sourceGroup || '').toLowerCase();
-    const letter = (sourceLetter || '').toUpperCase();
+    const group = (sourceGroup || "").toLowerCase();
+    const letter = (sourceLetter || "").toUpperCase();
     // Mapping rules:
     // Dryer: A->AD, B->BD, C->CD, D->DE
     // Silo (Bulk): A->AS, B->BS, C->CS, D->DB ("D bulk")
     // Compound: A->AC, B->BC
-    if (group === 'dryer') {
-        if (letter === 'A') return 'AD';
-        if (letter === 'B') return 'BD';
-        if (letter === 'C') return 'CD';
-        if (letter === 'D') return 'DE';
-    } else if (group === 'silo') {
-        if (letter === 'A') return 'AS';
-        if (letter === 'B') return 'BS';
-        if (letter === 'C') return 'CS';
-        if (letter === 'D') return 'DB';
-    } else if (group === 'compound') {
-        if (letter === 'A') return 'AC';
-        if (letter === 'B') return 'BC';
+    console.log(group, "group");
+
+    if (group === "dryer") {
+        if (letter === "A") return "AD";
+        if (letter === "B") return "BD";
+        if (letter === "C") return "CD";
+        if (letter === "D") return "DE";
+    } else if (group === "silo") {
+        if (letter === "A") return "AS";
+        if (letter === "B") return "BS";
+        if (letter === "C") return "CS";
+        if (letter === "D") return "DB";
+    } else if (group === "compound") {
+        if (letter === "A") return "AC";
+        if (letter === "B") return "BC";
     }
     // Fallback to existing default if unknown
-    return 'AC';
+    return "AC";
 }
 
 // Commit the currently displayed unit number by incrementing the stored daily sequence.
@@ -97,18 +99,18 @@ export function commitPrintedUnitNumber(sourceGroup, sourceLetter) {
     const now = new Date();
     const effective = apply1201Rule(now);
     const doy = getDayOfYear(effective);
-    const doyStr = String(doy).padStart(3, '0');
+    const doyStr = String(doy).padStart(3, "0");
     const seq = getAndIncrementDailySequence(effective);
-    const seqStr = String(seq).padStart(3, '0');
+    const seqStr = String(seq).padStart(3, "0");
     const prefix = getPrefixFor(sourceGroup, sourceLetter);
     const yearDigit = String(effective.getFullYear()).slice(-1);
     return `${prefix}1${yearDigit}${doyStr}${seqStr}`;
 }
 
 export function generateBigCode() {
-    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let out = '';
-    for (let i = 0; i < 7; i++) out += alphabet[Math.floor(Math.random() * alphabet.length)];
+    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let out = "";
+    for (let i = 0; i < 7; i++)
+        out += alphabet[Math.floor(Math.random() * alphabet.length)];
     return out;
 }
-
