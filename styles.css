@@ -280,14 +280,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: left;
-    width: 50% !important;
-    height: 100% !important;
+    width: auto !important;
+    height: auto !important;
 }
 .barcode canvas {
     /* position: relative; */
     /* top: 50%;
     left: 50%; */
-    transform: translate(-50%, -50%) rotate(90deg);
+    /* transform: translate(-50%, -50%) rotate(90deg); */
     /* size is set via JS by swapping width/height to fit column */
 }
 
