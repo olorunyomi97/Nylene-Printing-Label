@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { lbToKg } from './utils/format.js';
-import { buildBarcodePayload } from './payload.js';
+ 
 
 const LOGS_KEY = 'print_logs_v1';
 
@@ -35,7 +35,6 @@ export function buildLogRecord() {
         netKg: lbToKg(Number(state.weights.netLb || 0)),
         tareLb: Number(state.weights.tareLb || 0),
         tareKg: lbToKg(Number(state.weights.tareLb || 0)),
-        barcodePayload: buildBarcodePayload(),
     };
 }
 
