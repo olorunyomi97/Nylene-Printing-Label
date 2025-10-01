@@ -139,13 +139,11 @@ function updatePreview() {
 
     const svg = document.getElementById("barcodeSvg");
     if (svg) {
-        const container = svg.parentElement;
-        if (container) {
-            // Let CSS handle rotation and sizing; ensure it fills the column
-            svg.style.height = "100%";
-            svg.style.width = "auto";
-            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-        }
+        // Ensure the SVG renders fully inside the `.barcode` block
+        svg.style.width = "100%";
+        svg.style.height = "100%";
+        svg.removeAttribute('transform');
+        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         drawBarcode(svg, buildBarcodePayload());
     }
 

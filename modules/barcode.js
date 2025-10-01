@@ -36,6 +36,11 @@ export function drawBarcode(targetEl, text) {
             if (targetEl && targetEl.tagName && targetEl.tagName.toLowerCase() === 'svg') {
                 targetEl.setAttribute('shape-rendering', 'crispEdges');
                 targetEl.style.background = '#ffffff';
+                // Ensure JsBarcode does not leave transforms that offset the graphic
+                targetEl.removeAttribute('transform');
+                // Fill container
+                targetEl.setAttribute('width', '100%');
+                targetEl.setAttribute('height', '100%');
             }
             return;
         } catch (e) {
