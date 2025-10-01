@@ -274,22 +274,7 @@ body {
     text-decoration: underline;
     cursor: pointer;
 }
-.barcode {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    /* width: 100% !important;
-    height: 100% !important; */
-}
-.barcode canvas {
-    /* position: relative; */
-    /* top: 50%;
-    left: 50%; */
-    /* transform: translate(-50%, -50%) rotate(90deg); */
-    /* size is set via JS by swapping width/height to fit column */
-}
+
 
 .box-number {
     font-size: larger;
@@ -328,10 +313,7 @@ body {
         margin: 0 auto;
         box-shadow: none;
     }
-    .barcode canvas {
-        width: auto;
-        height: 100%;
-    }
+    
 }
 
 /* Scanner toast */
