@@ -1,7 +1,10 @@
 import { state, showScreen } from "../state.js";
-import { generateUnitNumber, commitPrintedUnitNumber } from "../utils/generators.js";
+import {
+    generateUnitNumber,
+    commitPrintedUnitNumber,
+} from "../utils/generators.js";
 import { lbToKg } from "../utils/format.js";
- 
+
 import { appendLogRecord, bindExcelButton } from "../logs.js";
 import { appendHistoryRecord } from "../history.js";
 
@@ -65,7 +68,9 @@ export function initPreviewStep() {
                     updatePreview();
                     window.removeEventListener("afterprint", restoreAfterPrint);
                 };
-                window.addEventListener("afterprint", restoreAfterPrint, { once: true });
+                window.addEventListener("afterprint", restoreAfterPrint, {
+                    once: true,
+                });
                 window.print();
                 return;
             }
@@ -101,7 +106,9 @@ export function initPreviewStep() {
                     updatePreview();
                 }
             };
-            window.addEventListener("afterprint", handleAfterPrint, { once: true });
+            window.addEventListener("afterprint", handleAfterPrint, {
+                once: true,
+            });
             window.print();
         });
 
@@ -123,9 +130,12 @@ function buildBarcodePayload() {
     if (state.bigCode) parts.push("PR", String(state.bigCode));
     if (src) parts.push("SRC", String(src));
     if (state.source.special) parts.push("SP", String(state.source.special));
-    if (state.weights.netLb) parts.push("NET", String(Number(state.weights.netLb)));
-    if (state.weights.tareLb) parts.push("TAR", String(Number(state.weights.tareLb)));
-    if (state.weights.grossLb) parts.push("GRO", String(Number(state.weights.grossLb)));
+    if (state.weights.netLb)
+        parts.push("NET", String(Number(state.weights.netLb)));
+    if (state.weights.tareLb)
+        parts.push("TAR", String(Number(state.weights.tareLb)));
+    if (state.weights.grossLb)
+        parts.push("GRO", String(Number(state.weights.grossLb)));
     return parts.join(" ");
 }
 
@@ -142,10 +152,10 @@ function renderBarcode(forPrint = false) {
             // Ensure crisp black on white for reliable scanning
             window.JsBarcode(el, payload, {
                 format: "CODE128",
-                width: moduleWidth,
-                height: barHeight,
+                width: 5,
+                height: 1000,
                 displayValue: false,
-                margin: quietMargin,
+                margin: 250,
                 marginLeft: quietMargin,
                 marginRight: quietMargin,
                 background: "#ffffff",
@@ -166,7 +176,9 @@ function renderBarcode(forPrint = false) {
 }
 
 function updatePreview() {
-    const now = state.previewTimestamp ? new Date(state.previewTimestamp) : new Date();
+    const now = state.previewTimestamp
+        ? new Date(state.previewTimestamp)
+        : new Date();
     const pad = (n) => String(n).padStart(2, "0");
     const stamp = `${pad(now.getMonth() + 1)}/${pad(
         now.getDate()
@@ -198,8 +210,6 @@ function updatePreview() {
     const unit = document.getElementById("unitNumber");
     if (unit) unit.textContent = state.bigCode;
 
-    
-
     const productEl = document.getElementById("productName");
     const sourceEl = document.getElementById("sourceChosen");
     if (productEl) productEl.textContent = state.bigCode || "—";
@@ -218,9 +228,8 @@ function updatePreview() {
     // Update the print button label according to mode
     const printBtn = document.getElementById("printBtn");
     if (printBtn)
-        printBtn.textContent = state.reprintAvailable && state.lastPrinted
-            ? "Reprint"
-            : "Print";
+        printBtn.textContent =
+            state.reprintAvailable && state.lastPrinted ? "Reprint" : "Print";
 
     // Render barcode as last item
     renderBarcode();
