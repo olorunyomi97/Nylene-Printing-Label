@@ -139,38 +139,73 @@ function buildBarcodePayload() {
     return parts.join(" ");
 }
 
+// function renderBarcode(forPrint = false) {
+//     const el = document.getElementById("labelBarcode");
+//     if (!el) return;
+//     const payload = buildBarcodePayload();
+
+//     try {
+//         if (window.JsBarcode && payload) {
+//             // Print vs screen settings
+//             const moduleWidth = forPrint ? 2 : 2; // thinner bars (2px is safe for most printers)
+//             const barHeight = forPrint ? 80 : 60; // not too tall, avoids oversaturation
+//             const quietMargin = forPrint ? 12 : 8;
+
+//             window.JsBarcode(el, payload, {
+//                 format: "CODE128",
+//                 width: moduleWidth,
+//                 height: 300,
+//                 displayValue: false,
+//                 margin: quietMargin,
+//                 background: "#ffffff",
+//                 lineColor: "#222222", // softer black to avoid "too dark" prints
+//             });
+
+//             // Crisp rendering hint for SVG
+//             try {
+//                 el.setAttribute("shape-rendering", "crispEdges");
+//             } catch {}
+//         } else {
+//             // Clear barcode if no payload
+//             while (el.firstChild) el.removeChild(el.firstChild);
+//         }
+//     } catch (e) {
+//         console.warn("Barcode render failed", e);
+//     }
+// }
+
 function renderBarcode(forPrint = false) {
     const el = document.getElementById("labelBarcode");
     if (!el) return;
     const payload = buildBarcodePayload();
+
     try {
         if (window.JsBarcode && payload) {
-            // Choose module size and margins for screen vs print
-            const moduleWidth = forPrint ? 3 : 2; // CSS px ~ 1/96in; 3px gives sturdier bars when printed
-            const barHeight = forPrint ? 110 : 70;
-            const quietMargin = forPrint ? 16 : 8;
-            // Ensure crisp black on white for reliable scanning
+            // Adjust bar width + spacing for better print readability
+            const moduleWidth = forPrint ? 3 : 2; // thicker base module for print
+            const barHeight = forPrint ? 90 : 60;
+            const quietMargin = forPrint ? 20 : 10; // bigger quiet zone (white space)
+
             window.JsBarcode(el, payload, {
                 format: "CODE128",
-                width: 5,
-                height: 1000,
+                width: moduleWidth,
+                height: 300,
                 displayValue: false,
-                margin: 250,
+                margin: quietMargin,
                 marginLeft: quietMargin,
                 marginRight: quietMargin,
                 background: "#ffffff",
-                lineColor: "#000000",
+                lineColor: "#222222", // softer than pure black
             });
-            // Reinforce crisp edges on the produced SVG
+
+            // Force crisp rendering
             try {
                 el.setAttribute("shape-rendering", "crispEdges");
             } catch {}
         } else {
-            // Clear if no payload
             while (el.firstChild) el.removeChild(el.firstChild);
         }
     } catch (e) {
-        // Best-effort: do not crash preview
         console.warn("Barcode render failed", e);
     }
 }
