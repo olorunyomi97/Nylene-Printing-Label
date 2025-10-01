@@ -103,6 +103,44 @@ export function initPreviewStep() {
     bindExcelButton();
 }
 
+function buildBarcodePayload() {
+    const group = state.activeGroup || "";
+    const letter = group ? state.source[group] || "" : "";
+    const src = group && letter ? `${group}-${letter}` : group || "";
+    const parts = [];
+    if (state.unitNumber) parts.push("UN", String(state.unitNumber));
+    if (state.bigCode) parts.push("PR", String(state.bigCode));
+    if (src) parts.push("SRC", String(src));
+    if (state.source.special) parts.push("SP", String(state.source.special));
+    if (state.weights.netLb) parts.push("NET", String(Number(state.weights.netLb)));
+    if (state.weights.tareLb) parts.push("TAR", String(Number(state.weights.tareLb)));
+    if (state.weights.grossLb) parts.push("GRO", String(Number(state.weights.grossLb)));
+    return parts.join(" ");
+}
+
+function renderBarcode() {
+    const el = document.getElementById("labelBarcode");
+    if (!el) return;
+    const payload = buildBarcodePayload();
+    try {
+        if (window.JsBarcode && payload) {
+            window.JsBarcode(el, payload, {
+                format: "CODE128",
+                width: 2,
+                height: 70,
+                displayValue: false,
+                margin: 0,
+            });
+        } else {
+            // Clear if no payload
+            while (el.firstChild) el.removeChild(el.firstChild);
+        }
+    } catch (e) {
+        // Best-effort: do not crash preview
+        console.warn("Barcode render failed", e);
+    }
+}
+
 function updatePreview() {
     const now = state.previewTimestamp ? new Date(state.previewTimestamp) : new Date();
     const pad = (n) => String(n).padStart(2, "0");
@@ -159,4 +197,7 @@ function updatePreview() {
         printBtn.textContent = state.reprintAvailable && state.lastPrinted
             ? "Reprint"
             : "Print";
+
+    // Render barcode as last item
+    renderBarcode();
 }
