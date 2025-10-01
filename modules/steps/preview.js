@@ -137,23 +137,16 @@ function updatePreview() {
     const unit = document.getElementById("unitNumber");
     if (unit) unit.textContent = state.bigCode;
 
-    const canvas = document.getElementById("barcodeCanvas");
-    if (canvas) {
-        const container = canvas.parentElement;
+    const svg = document.getElementById("barcodeSvg");
+    if (svg) {
+        const container = svg.parentElement;
         if (container) {
-            const rect = container.getBoundingClientRect();
-            const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
-            // Because we rotate the canvas 90deg via CSS, swap dimensions
-            const targetWidth = Math.max(1, Math.floor(rect.height * dpr));
-            const targetHeight = Math.max(1, Math.floor(rect.width * dpr));
-            if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-            }
-            canvas.style.height = "100%";
-            canvas.style.width = "auto";
+            // Let CSS handle rotation and sizing; ensure it fills the column
+            svg.style.height = "100%";
+            svg.style.width = "auto";
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         }
-        drawBarcode(canvas, buildBarcodePayload());
+        drawBarcode(svg, buildBarcodePayload());
     }
 
     const productEl = document.getElementById("productName");

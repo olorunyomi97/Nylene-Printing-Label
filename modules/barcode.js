@@ -1,31 +1,57 @@
-// Minimal Code39 renderer
-export function drawBarcode(canvas, text) {
+// Minimal Code39 renderer + JsBarcode (CODE128) with SVG/canvas support
+export function drawBarcode(targetEl, text) {
     // Prefer JsBarcode (CODE128) when available for standards-compliant scanning
-    if (window.JsBarcode && canvas) {
+    if (window.JsBarcode && targetEl) {
         try {
-            // Clear any previous drawing
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Compute a sensible height: when rotated 90deg in CSS, the JsBarcode
+            // "height" should roughly match the unrotated container width.
+            const rect = typeof targetEl.getBoundingClientRect === 'function'
+                ? targetEl.getBoundingClientRect()
+                : { width: targetEl.width || 300, height: targetEl.height || 120 };
+            const margin = 24;
+            const heightPx = Math.max(80, Math.floor((rect.width || 120) - margin * 2));
+
+            // Clear previous drawing/content
+            if (typeof targetEl.getContext === 'function') {
+                const ctx = targetEl.getContext('2d');
+                ctx.clearRect(0, 0, targetEl.width, targetEl.height);
+            } else {
+                targetEl.innerHTML = '';
+            }
+
             // Render CODE128 for broader character support
-            window.JsBarcode(canvas, String(text || ""), {
-                format: "CODE128",
+            window.JsBarcode(targetEl, String(text || ''), {
+                format: 'CODE128',
                 displayValue: false,
-                background: "#ffffff00",
-                lineColor: "#000000",
-                margin: 10, // quiet zone
-                width: 1, // narrower bars to shorten overall length
-                height: Math.max(40, canvas.height - 20),
+                background: '#ffffff',
+                lineColor: '#000000',
+                margin,
+                // Module width in px; thicker bars improve low-cost scanner reliability
+                width: 2.4,
+                height: heightPx,
                 textMargin: 0,
+                valid: function () { /* no-op; barcode data is always alphanumeric */ },
             });
+            // Improve rendering quality for SVG output
+            if (targetEl && targetEl.tagName && targetEl.tagName.toLowerCase() === 'svg') {
+                targetEl.setAttribute('shape-rendering', 'crispEdges');
+                targetEl.style.background = '#ffffff';
+            }
             return;
         } catch (e) {
-            // Fall through to basic renderer on any erro
+            // Fall through to basic renderer on any error
         }
     }
 
+    // Fallback only supports <canvas>
+    if (!targetEl || typeof targetEl.getContext !== 'function') return;
+
     // Fallback: Minimal Code39 renderer (uppercase limited charset)
+    const canvas = targetEl;
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // White background for reliable scanning
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     const code39 = {
         0: "101001101101",
         1: "110100101011",
@@ -73,11 +99,12 @@ export function drawBarcode(canvas, text) {
         "*": "100101101101",
     };
     const content = `*${(text || "").toString().toUpperCase()}*`;
-    const narrow = 2;
+    const quiet = 24;
+    const narrow = 3;
     const wide = narrow * 3;
-    let x = 10;
-    const y = 10;
-    const height = canvas.height - 20;
+    let x = quiet;
+    const y = quiet;
+    const height = Math.max(40, canvas.height - quiet * 2);
     ctx.fillStyle = "#000";
     for (const ch of content) {
         const pattern = code39[ch];
