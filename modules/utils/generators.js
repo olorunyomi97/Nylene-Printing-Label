@@ -110,6 +110,9 @@ function resolvePrefix(sourceGroup, sourceLetter) {
     } else if (group === "compound") {
         if (letter === "A") return "AC";
         if (letter === "B") return "BC";
+    } else if (group === "other" || group === "special") {
+        if (letter === "UX") return "UX";
+        if (letter === "LT") return "LT";
     }
     return "AC";
 }
