@@ -36,6 +36,12 @@ export function initSourceStep() {
             } else if (special === "Lactam") {
                 state.source.other = "LT";
             }
+            // Override displayed product name for special selections
+            if (special === "Unextracted") {
+                state.bigCode = "BS640UX";
+            } else if (special === "Lactam") {
+                state.bigCode = "Capro";
+            }
             // Update displayed unit number with new prefix and skip product selection
             state.unitNumber = generateUnitNumber(
                 state.activeGroup,
