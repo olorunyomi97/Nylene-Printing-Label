@@ -282,9 +282,9 @@ body {
     justify-content: left;
 }
 .barcode canvas {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    /* position: relative; */
+    /* top: 50%;
+    left: 50%; */
     transform: translate(-50%, -50%) rotate(90deg);
     /* size is set via JS by swapping width/height to fit column */
 }
