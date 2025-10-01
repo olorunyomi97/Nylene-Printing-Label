@@ -280,8 +280,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: left;
-    width: auto !important;
-    height: auto !important;
+    /* width: 100% !important;
+    height: 100% !important; */
 }
 .barcode canvas {
     /* position: relative; */
