@@ -253,9 +253,10 @@ body {
 }
 #labelBarcode {
     display: block;
-    width: 220%;
-    /* height: 100%; */
+    width: 100%;
+    height: 80px;
     shape-rendering: crispEdges;
+    font: lighter;
 }
 .footer-row {
     display: flex;
