@@ -26,7 +26,23 @@ export function initSourceStep() {
                 .querySelectorAll("[data-special]")
                 .forEach((x) => x.classList.remove("selected"));
             btn.classList.add("selected");
-            state.source.special = btn.getAttribute("data-special");
+            const special = btn.getAttribute("data-special");
+            state.source.special = special;
+            // Map special to synthetic group/letter for prefix logic
+            state.activeGroup = "other";
+            if (special === "Unextracted") {
+                state.source.other = "UX";
+            } else if (special === "Lactam") {
+                state.source.other = "LT";
+            }
+            // Update displayed unit number with new prefix and skip product selection
+            state.unitNumber = generateUnitNumber(state.activeGroup, state.source.other);
+            state.selectedProduct = null;
+            // Prefill default weights and go directly to weights screen (Enter Tare)
+            document.dispatchEvent(new CustomEvent("prefillDefaultWeights"));
+            showScreen("weights");
+            const gross = document.getElementById("grossWeight");
+            if (gross) gross.focus();
         });
     });
 
