@@ -253,8 +253,8 @@ body {
 }
 #labelBarcode {
     display: block;
-    width: 100%;
-    height: 80px;
+    width: 220%;
+    /* height: 100%; */
     shape-rendering: crispEdges;
 }
 .footer-row {
