@@ -26,7 +26,7 @@ export function initSourceStep() {
                 .querySelectorAll("[data-special]")
                 .forEach((x) => x.classList.remove("selected"));
             btn.classList.add("selected");
-            // state.source.special = btn.getAttribute("data-special");
+            // state.source.special = btn.getAttribute("data-speciall");
             const special = btn.getAttribute("data-special");
             state.source.special = special;
             // Map special to synthetic group/letter for prefix logic
