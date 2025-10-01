@@ -9,6 +9,17 @@ export function initPreviewStep() {
     document.addEventListener("updatePreview", updatePreview);
     updatePreview();
 
+    // Render barcode with print-optimized settings during print
+    const handleBeforePrint = () => {
+        renderBarcode(true);
+    };
+    const handleAfterPrintReRender = () => {
+        renderBarcode(false);
+        window.removeEventListener("afterprint", handleAfterPrintReRender);
+    };
+    window.addEventListener("beforeprint", handleBeforePrint);
+    window.addEventListener("afterprint", handleAfterPrintReRender);
+
     const back = document.getElementById("backToWeights");
     if (back) back.addEventListener("click", () => showScreen("weights"));
 
@@ -118,19 +129,32 @@ function buildBarcodePayload() {
     return parts.join(" ");
 }
 
-function renderBarcode() {
+function renderBarcode(forPrint = false) {
     const el = document.getElementById("labelBarcode");
     if (!el) return;
     const payload = buildBarcodePayload();
     try {
         if (window.JsBarcode && payload) {
+            // Choose module size and margins for screen vs print
+            const moduleWidth = forPrint ? 3 : 2; // CSS px ~ 1/96in; 3px gives sturdier bars when printed
+            const barHeight = forPrint ? 110 : 70;
+            const quietMargin = forPrint ? 16 : 8;
+            // Ensure crisp black on white for reliable scanning
             window.JsBarcode(el, payload, {
                 format: "CODE128",
-                width: 2,
-                height: 70,
+                width: moduleWidth,
+                height: barHeight,
                 displayValue: false,
-                margin: 0,
+                margin: quietMargin,
+                marginLeft: quietMargin,
+                marginRight: quietMargin,
+                background: "#ffffff",
+                lineColor: "#000000",
             });
+            // Reinforce crisp edges on the produced SVG
+            try {
+                el.setAttribute("shape-rendering", "crispEdges");
+            } catch {}
         } else {
             // Clear if no payload
             while (el.firstChild) el.removeChild(el.firstChild);
