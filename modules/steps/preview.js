@@ -185,7 +185,7 @@ export function initPreviewStep() {
 
         console.log(barcodeData, "barcodeData");
 
-        JsBarcode("#labelBarcode", `${state.unitNumber} | ${state.bigCode}`, {
+        JsBarcode("#labelBarcode", `${state.unitNumber}`, {
             displayValue: false,
             width: 2,
         });
