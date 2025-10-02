@@ -194,13 +194,6 @@ export function initPreviewStep() {
                 displayValue: false,
             }
         );
-        // JsBarcode(
-        //     "#labelBarcode2",
-        //     ` NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`,
-        //     {
-        //         displayValue: false,
-        //     }
-        // );
 
         // Update the print button label according to mode
         const printBtn = document.getElementById("printBtn");
