@@ -189,7 +189,7 @@ export function initPreviewStep() {
             "#labelBarcode",
             `${state.unitNumber}|
              ${state.bigCode} |
-             ${Number(state.weights.netLb || 0).toFixed(1)}`,
+             ${state.weights.netLb}`,
             {
                 displayValue: false,
             }
