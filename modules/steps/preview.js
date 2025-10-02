@@ -160,22 +160,31 @@ export function initPreviewStep() {
         }
 
         // Render barcode encoding Box number, Product, and Net weight (LBS)
-        try {
-            const barcodeEl = document.getElementById("labelBarcode");
-            if (barcodeEl && window.JsBarcode) {
-                const barcodeData = `BOX:${state.unitNumber}|PROD:${state.bigCode || ''}|NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
-                window.JsBarcode(barcodeEl, barcodeData, {
-                    format: "CODE128",
-                    lineColor: "#000",
-                    width: 2,
-                    height: 60,
-                    displayValue: false,
-                    margin: 0,
-                });
-            }
-        } catch (e) {
-            // Fail silently if barcode cannot render
-        }
+        // try {
+        //     const barcodeEl = document.getElementById("labelBarcode");
+        //     if (barcodeEl && window.JsBarcode) {
+        //         const barcodeData = `BOX:${state.unitNumber}|PROD:${
+        //             state.bigCode || ""
+        //         }|NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
+        //         window.JsBarcode(barcodeEl, barcodeData, {
+        //             format: "CODE128",
+        //             lineColor: "#000",
+        //             width: 2,
+        //             height: 60,
+        //             displayValue: false,
+        //             margin: 0,
+        //         });
+        //     }
+        // } catch (e) {
+        //     // Fail silently if barcode cannot render
+        // }
+        const barcodeData = `BOX:${state.unitNumber}|PROD:${
+            state.bigCode || ""
+        }|NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
+
+        JsBarcode("#barcode", "Hi, Bitches", {
+            displayValue: false,
+        });
 
         // Update the print button label according to mode
         const printBtn = document.getElementById("printBtn");
