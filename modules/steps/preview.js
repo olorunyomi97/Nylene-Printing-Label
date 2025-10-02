@@ -185,7 +185,19 @@ export function initPreviewStep() {
 
         console.log(barcodeData, "barcodeData");
 
-        JsBarcode("#labelBarcode", "Hi");
+        // JsBarcode("#labelBarcode", "Hi");
+
+        JsBarcode("#labelBarcode")
+            .options({ font: "OCR-B" }) // Will affect all barcodes
+            .EAN13("1234567890128", { fontSize: 18, textMargin: 0 })
+            .blank(20) // Create space between the barcodes
+            // .EAN5("12345", {
+            //     height: 85,
+            //     textPosition: "top",
+            //     fontSize: 16,
+            //     marginTop: 15,
+            // })
+            .render();
 
         // Update the print button label according to mode
         const printBtn = document.getElementById("printBtn");
