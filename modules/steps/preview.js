@@ -187,7 +187,7 @@ export function initPreviewStep() {
 
         JsBarcode("#labelBarcode", `${state.unitNumber} | ${state.bigCode}`, {
             displayValue: false,
-            width: 1.5,
+            width: 1.8,
         });
 
         // Update the print button label according to mode
