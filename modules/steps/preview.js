@@ -188,8 +188,7 @@ export function initPreviewStep() {
         JsBarcode(
             "#labelBarcode",
             `${state.unitNumber}|
-             ${state.bigCode} 
-            `,
+             ${state.bigCode} `,
             {
                 displayValue: false,
             }
