@@ -175,7 +175,7 @@ export function initPreviewStep() {
         //             margin: 0,
         //         });
         //     }
-        // } catch (e) {
+        // } catch (e) {d
         //     // Fail silently if barcode cannot render
         // }
         const barcodeData = `
