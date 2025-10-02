@@ -182,7 +182,7 @@ export function initPreviewStep() {
             state.bigCode || ""
         }|NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
 
-        JsBarcode("#barcode", "Hi, Bitches", {
+        JsBarcode("#barcode", "Hi", {
             displayValue: false,
         });
 
