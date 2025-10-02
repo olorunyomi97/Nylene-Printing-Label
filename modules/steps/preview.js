@@ -195,7 +195,7 @@ export function initPreviewStep() {
             }
         );
         JsBarcode(
-            "#labelBarcode",
+            "#labelBarcode2",
             ` NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`,
             {
                 displayValue: false,
