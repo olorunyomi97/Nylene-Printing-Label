@@ -12,17 +12,6 @@ export function initPreviewStep() {
     document.addEventListener("updatePreview", updatePreview);
     updatePreview();
 
-    // Render barcode with print-optimized settings during print
-    const handleBeforePrint = () => {
-        renderBarcode(true);
-    };
-    const handleAfterPrintReRender = () => {
-        renderBarcode(false);
-        window.removeEventListener("afterprint", handleAfterPrintReRender);
-    };
-    window.addEventListener("beforeprint", handleBeforePrint);
-    window.addEventListener("afterprint", handleAfterPrintReRender);
-
     const back = document.getElementById("backToWeights");
     if (back) back.addEventListener("click", () => showScreen("weights"));
 
@@ -119,153 +108,63 @@ export function initPreviewStep() {
         });
 
     bindExcelButton();
-}
 
-function buildBarcodePayload() {
-    const group = state.activeGroup || "";
-    const letter = group ? state.source[group] || "" : "";
-    const src = group && letter ? `${group}-${letter}` : group || "";
-    const parts = [];
-    if (state.unitNumber) parts.push("UN", String(state.unitNumber));
-    if (state.bigCode) parts.push("PR", String(state.bigCode));
-    if (src) parts.push("SRC", String(src));
-    if (state.source.special) parts.push("SP", String(state.source.special));
-    if (state.weights.netLb)
-        parts.push("NET", String(Number(state.weights.netLb)));
-    if (state.weights.tareLb)
-        parts.push("TAR", String(Number(state.weights.tareLb)));
-    if (state.weights.grossLb)
-        parts.push("GRO", String(Number(state.weights.grossLb)));
-    return parts.join(" ");
-}
+    function updatePreview() {
+        const now = state.previewTimestamp
+            ? new Date(state.previewTimestamp)
+            : new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        const stamp = `${pad(now.getMonth() + 1)}/${pad(
+            now.getDate()
+        )}/${now.getFullYear()} ${pad(now.getHours())}:${pad(
+            now.getMinutes()
+        )}:${pad(now.getSeconds())}`;
+        const pkgDate = document.getElementById("pkgDate");
+        if (pkgDate) pkgDate.textContent = stamp;
 
-// function renderBarcode(forPrint = false) {
-//     const el = document.getElementById("labelBarcode");
-//     if (!el) return;
-//     const payload = buildBarcodePayload();
+        const bigCode = document.getElementById("bigCode");
+        if (bigCode) bigCode.textContent = state.unitNumber;
 
-//     try {
-//         if (window.JsBarcode && payload) {
-//             // Print vs screen settings
-//             const moduleWidth = forPrint ? 2 : 2; // thinner bars (2px is safe for most printers)
-//             const barHeight = forPrint ? 80 : 60; // not too tall, avoids oversaturation
-//             const quietMargin = forPrint ? 12 : 8;
+        const grossLb = state.weights.grossLb;
+        const netLb = state.weights.netLb;
+        const tareLb = state.weights.tareLb;
+        const grossKgEl = document.getElementById("grossKg");
+        const grossLbEl = document.getElementById("grossLb");
+        const netKgEl = document.getElementById("netKg");
+        const netLbEl = document.getElementById("netLb");
+        const tareKgEl = document.getElementById("tareKg");
+        const tareLbEl = document.getElementById("tareLb");
+        if (grossKgEl) grossKgEl.textContent = lbToKg(grossLb).toFixed(1);
+        if (grossLbEl) grossLbEl.textContent = grossLb.toFixed(1);
+        if (netKgEl) netKgEl.textContent = lbToKg(netLb).toFixed(1);
+        if (netLbEl) netLbEl.textContent = netLb.toFixed(1);
+        if (tareKgEl) tareKgEl.textContent = lbToKg(tareLb).toFixed(1);
+        if (tareLbEl) tareLbEl.textContent = tareLb.toFixed(1);
 
-//             window.JsBarcode(el, payload, {
-//                 format: "CODE128",
-//                 width: moduleWidth,
-//                 height: 300,
-//                 displayValue: false,
-//                 margin: quietMargin,
-//                 background: "#ffffff",
-//                 lineColor: "#222222", // softer black to avoid "too dark" prints
-//             });
+        const unit = document.getElementById("unitNumber");
+        if (unit) unit.textContent = state.bigCode;
 
-//             // Crisp rendering hint for SVG
-//             try {
-//                 el.setAttribute("shape-rendering", "crispEdges");
-//             } catch {}
-//         } else {
-//             // Clear barcode if no payload
-//             while (el.firstChild) el.removeChild(el.firstChild);
-//         }
-//     } catch (e) {
-//         console.warn("Barcode render failed", e);
-//     }
-// }
-
-function renderBarcode(forPrint = false) {
-    const el = document.getElementById("labelBarcode");
-    if (!el) return;
-    const payload = buildBarcodePayload();
-
-    try {
-        if (window.JsBarcode && payload) {
-            // Adjust bar width + spacing for better print readability
-            const moduleWidth = forPrint ? 3 : 2; // thicker base module for print
-            const barHeight = forPrint ? 90 : 60;
-            const quietMargin = forPrint ? 20 : 10; // bigger quiet zone (white space)
-
-            window.JsBarcode(el, payload, {
-                format: "CODE128",
-                width: moduleWidth,
-                height: 300,
-                displayValue: false,
-                margin: quietMargin,
-                marginLeft: quietMargin,
-                marginRight: quietMargin,
-                background: "#ffffff",
-                lineColor: "#222222", // softer than pure black
-            });
-
-            // Force crisp rendering
-            try {
-                el.setAttribute("shape-rendering", "crispEdges");
-            } catch {}
-        } else {
-            while (el.firstChild) el.removeChild(el.firstChild);
+        const productEl = document.getElementById("productName");
+        const sourceEl = document.getElementById("sourceChosen");
+        if (productEl) productEl.textContent = state.bigCode || "—";
+        if (sourceEl) {
+            const group = state.activeGroup;
+            const letter = group ? state.source[group] : null;
+            const special = state.source.special
+                ? ` (${state.source.special})`
+                : "";
+            sourceEl.textContent =
+                group && letter
+                    ? `${group.toUpperCase()} ${letter}${special}`
+                    : "—";
         }
-    } catch (e) {
-        console.warn("Barcode render failed", e);
+
+        // Update the print button label according to mode
+        const printBtn = document.getElementById("printBtn");
+        if (printBtn)
+            printBtn.textContent =
+                state.reprintAvailable && state.lastPrinted
+                    ? "Reprint"
+                    : "Print";
     }
-}
-
-function updatePreview() {
-    const now = state.previewTimestamp
-        ? new Date(state.previewTimestamp)
-        : new Date();
-    const pad = (n) => String(n).padStart(2, "0");
-    const stamp = `${pad(now.getMonth() + 1)}/${pad(
-        now.getDate()
-    )}/${now.getFullYear()} ${pad(now.getHours())}:${pad(
-        now.getMinutes()
-    )}:${pad(now.getSeconds())}`;
-    const pkgDate = document.getElementById("pkgDate");
-    if (pkgDate) pkgDate.textContent = stamp;
-
-    const bigCode = document.getElementById("bigCode");
-    if (bigCode) bigCode.textContent = state.unitNumber;
-
-    const grossLb = state.weights.grossLb;
-    const netLb = state.weights.netLb;
-    const tareLb = state.weights.tareLb;
-    const grossKgEl = document.getElementById("grossKg");
-    const grossLbEl = document.getElementById("grossLb");
-    const netKgEl = document.getElementById("netKg");
-    const netLbEl = document.getElementById("netLb");
-    const tareKgEl = document.getElementById("tareKg");
-    const tareLbEl = document.getElementById("tareLb");
-    if (grossKgEl) grossKgEl.textContent = lbToKg(grossLb).toFixed(1);
-    if (grossLbEl) grossLbEl.textContent = grossLb.toFixed(1);
-    if (netKgEl) netKgEl.textContent = lbToKg(netLb).toFixed(1);
-    if (netLbEl) netLbEl.textContent = netLb.toFixed(1);
-    if (tareKgEl) tareKgEl.textContent = lbToKg(tareLb).toFixed(1);
-    if (tareLbEl) tareLbEl.textContent = tareLb.toFixed(1);
-
-    const unit = document.getElementById("unitNumber");
-    if (unit) unit.textContent = state.bigCode;
-
-    const productEl = document.getElementById("productName");
-    const sourceEl = document.getElementById("sourceChosen");
-    if (productEl) productEl.textContent = state.bigCode || "—";
-    if (sourceEl) {
-        const group = state.activeGroup;
-        const letter = group ? state.source[group] : null;
-        const special = state.source.special
-            ? ` (${state.source.special})`
-            : "";
-        sourceEl.textContent =
-            group && letter
-                ? `${group.toUpperCase()} ${letter}${special}`
-                : "—";
-    }
-
-    // Update the print button label according to mode
-    const printBtn = document.getElementById("printBtn");
-    if (printBtn)
-        printBtn.textContent =
-            state.reprintAvailable && state.lastPrinted ? "Reprint" : "Print";
-
-    // Render barcode as last item
-    renderBarcode();
 }
