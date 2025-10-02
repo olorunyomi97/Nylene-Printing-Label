@@ -324,7 +324,7 @@ body {
     }
     #labelBarcode {
         width: 100% !important;
-        height: 1.4in !important; /* ensure sufficient bar height on print */
+        height: 1.4in !important; /* ensure sufficien bar height on print */
     }
 }
 
