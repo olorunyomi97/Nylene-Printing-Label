@@ -178,23 +178,16 @@ export function initPreviewStep() {
         // } catch (e) {
         //     // Fail silently if barcode cannot render
         // }
-        const barcodeData = `
-        BOX:${state.unitNumber}|
-        PROD:${state.bigCode || ""}|
-        NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
+        // const barcodeData = `
+        // BOX:${state.unitNumber}|
+        // PROD:${state.bigCode || ""}|
+        // NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
 
         console.log(barcodeData, "barcodeData");
 
-        JsBarcode(
-            "#labelBarcode",
-            `
-            ${state.unitNumber}|
-            ${state.bigCode}
-            `,
-            {
-                displayValue: false,
-            }
-        );
+        JsBarcode("#labelBarcode", `${state.unitNumber | state.bigCode}`, {
+            displayValue: false,
+        });
 
         // Update the print button label according to mode
         const printBtn = document.getElementById("printBtn");
