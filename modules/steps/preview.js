@@ -185,7 +185,7 @@ export function initPreviewStep() {
 
         console.log(barcodeData, "barcodeData");
 
-        JsBarcode("#labelBarcode", barcodeData);
+        JsBarcode("#labelBarcode", `BOX:${state.unitNumber}`);
 
         // Update the print button label according to mode
         const printBtn = document.getElementById("printBtn");
