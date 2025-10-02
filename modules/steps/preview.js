@@ -12,17 +12,6 @@ export function initPreviewStep() {
     document.addEventListener("updatePreview", updatePreview);
     updatePreview();
 
-    // Render barcode with print-optimized settings during print
-    const handleBeforePrint = () => {
-        renderBarcode(true);
-    };
-    const handleAfterPrintReRender = () => {
-        renderBarcode(false);
-        window.removeEventListener("afterprint", handleAfterPrintReRender);
-    };
-    window.addEventListener("beforeprint", handleBeforePrint);
-    window.addEventListener("afterprint", handleAfterPrintReRender);
-
     const back = document.getElementById("backToWeights");
     if (back) back.addEventListener("click", () => showScreen("weights"));
 
@@ -119,96 +108,6 @@ export function initPreviewStep() {
         });
 
     bindExcelButton();
-}
-
-function buildBarcodePayload() {
-    const group = state.activeGroup || "";
-    const letter = group ? state.source[group] || "" : "";
-    const src = group && letter ? `${group}-${letter}` : group || "";
-    const parts = [];
-    if (state.unitNumber) parts.push("UN", String(state.unitNumber));
-    if (state.bigCode) parts.push("PR", String(state.bigCode));
-    if (src) parts.push("SRC", String(src));
-    if (state.source.special) parts.push("SP", String(state.source.special));
-    if (state.weights.netLb)
-        parts.push("NET", String(Number(state.weights.netLb)));
-    if (state.weights.tareLb)
-        parts.push("TAR", String(Number(state.weights.tareLb)));
-    if (state.weights.grossLb)
-        parts.push("GRO", String(Number(state.weights.grossLb)));
-    return parts.join(" ");
-}
-
-// function renderBarcode(forPrint = false) {
-//     const el = document.getElementById("labelBarcode");
-//     if (!el) return;
-//     const payload = buildBarcodePayload();
-
-//     try {
-//         if (window.JsBarcode && payload) {
-//             // Print vs screen settings
-//             const moduleWidth = forPrint ? 2 : 2; // thinner bars (2px is safe for most printers)
-//             const barHeight = forPrint ? 80 : 60; // not too tall, avoids oversaturation
-//             const quietMargin = forPrint ? 12 : 8;
-
-//             window.JsBarcode(el, payload, {
-//                 format: "CODE128",
-//                 width: moduleWidth,
-//                 height: 300,
-//                 displayValue: false,
-//                 margin: quietMargin,
-//                 background: "#ffffff",
-//                 lineColor: "#222222", // softer black to avoid "too dark" prints
-//             });
-
-//             // Crisp rendering hint for SVG
-//             try {
-//                 el.setAttribute("shape-rendering", "crispEdges");
-//             } catch {}
-//         } else {
-//             // Clear barcode if no payload
-//             while (el.firstChild) el.removeChild(el.firstChild);
-//         }
-//     } catch (e) {
-//         console.warn("Barcode render failed", e);
-//     }
-// }
-
-function renderBarcode(forPrint = false) {
-    const el = document.getElementById("labelBarcode");
-    if (!el) return;
-    const payload = buildBarcodePayload();
-
-    try {
-        if (window.JsBarcode && payload) {
-            // Adjust bar width + spacing for better print readability
-            const moduleWidth = forPrint ? 3 : 2; // thicker base module for print
-            const barHeight = forPrint ? 90 : 60;
-            const quietMargin = forPrint ? 20 : 10; // bigger quiet zone (white space)
-
-            window.JsBarcode(el, payload, {
-                format: "CODE128",
-                width: moduleWidth,
-                height: 300,
-                displayValue: false,
-                margin: quietMargin,
-                marginLeft: quietMargin,
-                marginRight: quietMargin,
-                background: "#ffffff",
-                lineColor: "#222222", // softer than pure black
-            });
-
-            // Force crisp rendering
-            try {
-                el.setAttribute("shape-rendering", "crispEdges");
-            } catch {}
-        } else {
-            while (el.firstChild) el.removeChild(el.firstChild);
-        }
-    } catch (e) {
-        console.warn("Barcode render failed", e);
-    }
-}
 
 function updatePreview() {
     const now = state.previewTimestamp
@@ -266,6 +165,4 @@ function updatePreview() {
         printBtn.textContent =
             state.reprintAvailable && state.lastPrinted ? "Reprint" : "Print";
 
-    // Render barcode as last item
-    renderBarcode();
 }

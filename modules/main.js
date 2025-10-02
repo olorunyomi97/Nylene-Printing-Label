@@ -5,7 +5,6 @@ import { initProductsStep } from './steps/products.js';
 import { initWeightsStep } from './steps/weights.js';
 import { initPreviewStep } from './steps/preview.js';
 import { initLabelDatabaseStep } from './steps/labeldatabase.js';
-import { initScanner } from './scanner.js';
 
 async function loadFragment(path) {
     const res = await fetch(path, { cache: 'no-store' });
@@ -38,52 +37,8 @@ async function bootstrap() {
     initPreviewStep();
     initLabelDatabaseStep();
 
-    // Initialize scanner toast on scan
-    initScanner(({ raw, parsed, info, error }) => {
-        const detailLines = [];
-        if (error) detailLines.push('Scan error');
-        if (parsed) {
-            if (parsed.product) detailLines.push(`Product: ${parsed.product}`);
-            if (parsed.unitNumber) detailLines.push(`Unit: ${parsed.unitNumber}`);
-            if (parsed.net) detailLines.push(`Net: ${parsed.net} LBS`);
-        }
-        if (info) {
-            if (info.sourceGroup || info.sourceLetter) {
-                const sg = (info.sourceGroup || '').toUpperCase();
-                const sl = info.sourceLetter || '';
-                detailLines.push(`Source: ${sg}${sl ? '-' + sl : ''}`);
-            }
-        }
-        showToast(`Scanned: ${raw}`, detailLines.join(' · '));
-    });
-
     showScreen('source');
 }
 
 bootstrap();
-
-function showToast(title, subtitle) {
-    let host = document.getElementById('toast-host');
-    if (!host) {
-        host = document.createElement('div');
-        host.id = 'toast-host';
-        document.body.appendChild(host);
-    }
-    const el = document.createElement('div');
-    el.className = 'toast';
-    el.innerHTML = `<div class="toast-title">${escapeHtml(title)}</div>${subtitle ? `<div class="toast-sub">${escapeHtml(subtitle)}</div>` : ''}`;
-    host.appendChild(el);
-    requestAnimationFrame(() => el.classList.add('show'));
-    setTimeout(() => {
-        el.classList.remove('show');
-        setTimeout(() => el.remove(), 300);
-    }, 2500);
-}
-
-function escapeHtml(s) {
-    return String(s || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-}
 
