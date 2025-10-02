@@ -178,10 +178,10 @@ export function initPreviewStep() {
         // } catch (e) {
         //     // Fail silently if barcode cannot render
         // }
-        // const barcodeData = `
-        // BOX:${state.unitNumber}|
-        // PROD:${state.bigCode || ""}|
-        // NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
+        const barcodeData = `
+        BOX:${state.unitNumber}|
+        PROD:${state.bigCode || ""}|
+        NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`;
 
         console.log(barcodeData, "barcodeData");
 
