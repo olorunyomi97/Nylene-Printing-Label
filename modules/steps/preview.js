@@ -188,8 +188,15 @@ export function initPreviewStep() {
         JsBarcode(
             "#labelBarcode",
             `${state.unitNumber}|
-             ${state.bigCode} |
-             ${state.weights.netLb}`,
+             ${state.bigCode} 
+            `,
+            {
+                displayValue: false,
+            }
+        );
+        JsBarcode(
+            "#labelBarcode",
+            ` NETLB:${Number(state.weights.netLb || 0).toFixed(1)}`,
             {
                 displayValue: false,
             }
