@@ -219,16 +219,16 @@ body {
 
 /* Right-side vertical barcode column */
 .label-barcode-col {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 .label-barcode-col svg {
-	transform: rotate(90deg);
-	transform-origin: center;
-	width: 560px;
-	height: 120px;
+    transform: rotate(90deg);
+    transform-origin: center;
+    width: 560px;
+    height: 120px;
 }
 .label-header {
     display: flex;
@@ -328,13 +328,9 @@ body {
         box-shadow: none;
     }
 
-	/* Scale barcode for print so it fills the label height but fits column width */
-	.label-barcode-col svg {
-		width: 460px;
-		height: 120px;
-	}
-
-    /* .labelBarcodee {
-        background-color: red;
+    /* Scale barcode for print so it fills the label height but fits column width */
+    /* .label-barcode-col svg {
+        width: 460px;
+        height: 120px;
     } */
 }
