@@ -187,8 +187,6 @@ export function initPreviewStep() {
 
         JsBarcode("#labelBarcode", `${state.unitNumber}`, {
             displayValue: false,
-            margin: 0,
-            height: 120,
             width: 2,
         });
 
