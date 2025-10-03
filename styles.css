@@ -223,11 +223,6 @@ body {
     grid-column: 1; /* left side */
 }
 
-.labelBarcodee {
-    grid-column: 2; /* right side */
-    grid-row: 1; /* place at the top row */
-    justify-self: end;
-}
 .label-header {
     display: flex;
     align-items: center;
