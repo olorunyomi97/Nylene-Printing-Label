@@ -206,23 +206,30 @@ body {
     color: #000;
     width: 100%;
     height: 600px;
-    /* display: grid;
-    grid-template-columns: 1fr 140px; */
+    display: grid;
+    grid-template-columns: 1fr 140px;
     gap: 10px;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 12px 28px rgba(0, 0, 0, 0.08);
 }
 .label-main {
     display: grid;
-    grid-template-columns: 7.5fr 4.5fr; /* 8/12 for text, 4/12 for barcode */
-    grid-template-rows: auto 1fr; /* let rows size naturally */
-    column-gap: 20px;
-    align-items: start;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 10px;
 }
 
-.label-text {
-    grid-column: 1; /* left side */
+/* Right-side vertical barcode column */
+.label-barcode-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
-
+.label-barcode-col svg {
+    transform: rotate(90deg);
+    transform-origin: center;
+    width: 560px;
+    height: 120px;
+}
 .label-header {
     display: flex;
     align-items: center;
