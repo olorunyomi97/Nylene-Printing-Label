@@ -206,15 +206,10 @@ body {
     color: #000;
     width: 100%;
     height: 600px;
-    display: grid;
-    grid-template-columns: 1fr 140px;
+    /* display: grid; */
+    /* grid-template-columns: 1fr 140px; */
     gap: 10px;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 12px 28px rgba(0, 0, 0, 0.08);
-}
-.label-main {
-    display: grid;
-    grid-template-rows: auto auto auto 1fr;
-    gap: 10px;
 }
 
 /* Right-side vertical barcode column */
@@ -230,30 +225,61 @@ body {
     width: 560px;
     height: 120px;
 }
+
 .label-header {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* stack items top → bottom */
+    align-items: flex-start; /* keep them left-aligned */
+    margin-bottom: 15px; /* space below header */
+}
+
+.label-header img {
+    margin-bottom: 5px; /* small gap between logo and text */
 }
 .label-header .made {
     font-size: 14px;
     line-height: 1.2;
 }
-.label-header .logo {
-    margin-left: auto;
-    height: 48px;
-}
+
 .big-code {
     font-size: 80px;
     font-weight: 500;
     letter-spacing: 4px;
     text-align: left;
 }
-.weights {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.label-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
-.w-title {
+
+.weights {
+    /* display: flex; */
+    flex-direction: column;
+    align-items: baseline;
+    text-align: end;
+    margin-top: 140px;
+}
+
+.label-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* left column + right column */
+    gap: 20px;
+    align-items: start;
+}
+
+.label-logo {
+    display: flex;
+    flex-direction: column; /* stack logo and text */
+    align-items: flex-start; /* keep them left-aligned */
+    margin-bottom: 15px;
+}
+
+.label-logo img {
+    margin-bottom: 4px; /* little gap between logo and text */
+}
+
+.w-titles {
     font-size: 20px;
     font-weight: 100;
 }
@@ -263,6 +289,7 @@ body {
 .w-values {
     font-size: 24px;
     font-weight: 600;
+    padding-bottom: 20px;
 }
 .footer-row {
     display: flex;
