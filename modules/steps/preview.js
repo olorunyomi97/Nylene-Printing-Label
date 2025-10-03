@@ -22,6 +22,29 @@ export function initPreviewStep() {
             updatePreview();
         });
 
+    // Prepare DOM to print two copies: clone the label canvas and insert it
+    // right after the original, but keep it hidden on-screen. A print-only
+    // CSS rule will reveal it and force a page break so each copy is on its
+    // own sheet. The clone is cleaned up automatically after printing.
+    function prepareTwoCopiesForPrint() {
+        const original = document.getElementById("labelCanvas");
+        if (!original) return;
+        // Avoid creating multiple duplicates if print is triggered repeatedly
+        const already = original.parentElement && original.parentElement.querySelector(
+            '.label-canvas[data-print-duplicate="true"]'
+        );
+        if (already) return;
+        const duplicate = original.cloneNode(true);
+        duplicate.setAttribute("data-print-duplicate", "true");
+        duplicate.style.display = "none"; // hidden during screen view
+        original.insertAdjacentElement("afterend", duplicate);
+        const cleanup = () => {
+            if (duplicate && duplicate.parentNode) duplicate.parentNode.removeChild(duplicate);
+            window.removeEventListener("afterprint", cleanup);
+        };
+        window.addEventListener("afterprint", cleanup, { once: true });
+    }
+
     const printBtn = document.getElementById("printBtn");
     if (printBtn)
         printBtn.addEventListener("click", () => {
@@ -60,6 +83,8 @@ export function initPreviewStep() {
                 window.addEventListener("afterprint", restoreAfterPrint, {
                     once: true,
                 });
+                // Ensure we print two copies
+                prepareTwoCopiesForPrint();
                 window.print();
                 return;
             }
@@ -98,6 +123,8 @@ export function initPreviewStep() {
             window.addEventListener("afterprint", handleAfterPrint, {
                 once: true,
             });
+            // Ensure we print two copies
+            prepareTwoCopiesForPrint();
             window.print();
         });
 
