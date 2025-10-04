@@ -355,6 +355,14 @@ body {
         box-shadow: none;
     }
 
+    /* Show the duplicated copy only during print and force a page break
+       so we always get two separate labels per print job */
+    .label-canvas[data-print-duplicate="true"] {
+        display: block !important;
+        break-before: page;
+        page-break-before: always;
+    }
+
     /* .labelBarcodee {
         background-color: red;
     } */
